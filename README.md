@@ -17,7 +17,7 @@ learning golang
 ### 目前 Mutex 的 state 字段有几个意义，这几个意义分别是由哪些字段表示的？
 - 前三个 bit 分别为 mutexLocked（持有锁的标记）、mutexWoken（唤醒标记）、mutexStarving（饥饿标记），剩余 bit 表示 mutexWaiter（阻塞等待的 waiter 数量）
 ### 等待一个 Mutex 的 goroutine 数最大是多少？是否能满足现实的需求？
-- 单从程序来看，可以支持 1<<(32-3)-1 ，约 0.5 Billion 个，其中 32 为 state 的类型 int32，3 位 waiter 字段的 shift，考虑到实际 goroutine 初始化的空间为 2K，0.5 Billin * 2K 达到了 1TB，单从内存空间来说已经要求极高了，当前的设计肯定可以满足了。
+- 单从程序来看，可以支持 1<<(32-3) -1 ，约 0.5 Billion 个，其中 32 为 state 的类型 int32，3 位 waiter 字段的 shift，考虑到实际 goroutine 初始化的空间为 2K，0.5 Billin * 2K 达到了 1TB，单从内存空间来说已经要求极高了，当前的设计肯定可以满足了。
 ### 使用 Mutex 常见的错误场景有 4 类。
 - Lock/Unlock 不是成对出现，就意味着会出现死锁的情况，或者是因为 Unlock 一个未加锁的 Mutex 而导致 panic。
 - Copy 已使用的 Mutex，Package sync 的同步原语在使用后是不能复制的。Mutex 是一个有状态的对象，它的 state 字段记录这个锁的状态。如果你要复制一个已经加锁的 Mutex 给一个新的变量，那么新的刚初始化的变量居然被加锁了，这显然不符合你的期望。
