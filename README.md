@@ -21,3 +21,4 @@ learning golang
 ### 使用 Mutex 常见的错误场景有 4 类。
 - Lock/Unlock 不是成对出现，就意味着会出现死锁的情况，或者是因为 Unlock 一个未加锁的 Mutex 而导致 panic。
 - Copy 已使用的 Mutex，Package sync 的同步原语在使用后是不能复制的。Mutex 是一个有状态的对象，它的 state 字段记录这个锁的状态。如果你要复制一个已经加锁的 Mutex 给一个新的变量，那么新的刚初始化的变量居然被加锁了，这显然不符合你的期望。
+### go vet 文件名.go 检测 Mutex 复制问题的命令。
