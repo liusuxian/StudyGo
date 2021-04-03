@@ -64,3 +64,7 @@ const rwmutexMaxReaders = 1 << 30
 - 字段readerWait：记录writer请求锁时需要等待read完成的reader的数量。
 - 字段writerSem和字段readerSem：都是为了阻塞设计的信号量。
 - 常量rwmutexMaxReaders，定义了最大的reader数量。
+### RWMutex的3个踩坑点。
+- 坑点 1：不可复制，同Mutex。
+- 坑点 2：重入导致死锁，同Mutex。第二种死锁的场景有点隐蔽。我们知道，有活跃reader的时候，writer会等待，如果我们在reader的读操作时调用writer的写操作（它会调用Lock方法），那么这个reader和writer就会形成互相依赖的死锁状态。Reader想等待writer完成后再释放锁，而writer需要这个reader释放锁之后，才能不阻塞地继续执行。这是一个读写锁常见的死锁场景。第三种死锁的场景更加隐蔽。当一个writer请求锁的时候，如果已经有一些活跃的reader，它会等待这些活跃的reader完成，才有可能获取到锁，但是如果之后活跃的reader再依赖新的reader的话，这些新的reader就会等待writer释放锁之后才能继续执行，这就形成了一个环形依赖： writer依赖活跃的reader->活跃的reader依赖新来的reader->新来的reader依赖writer。
+- 坑点 3：释放未加锁的RWMutex，同Mutex。
