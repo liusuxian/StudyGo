@@ -1,4 +1,4 @@
-### Go标准库中的WaitGroup提供了三个方法
+### Go标准库中的WaitGroup提供了三个方法。
 ``` go
 func (wg *WaitGroup) Add(delta int)
 func (wg *WaitGroup) Done()
@@ -32,3 +32,6 @@ func (wg *WaitGroup) state() (statep *uint64, semap *uint32) {
 ```
 - noCopy的辅助字段，主要就是辅助vet工具检查是否通过copy赋值这个WaitGroup实例。
 - state1，一个具有复合意义的字段，包含WaitGroup的计数、阻塞在检查点的waiter数和信号量。
+### 使用WaitGroup时的常见错误。
+- 常见问题一：计数器设置为负值。WaitGroup的计数器的值必须大于等于0。我们在更改这个计数值的时候，WaitGroup会先做检查，如果计数值被设置为负数，就会导致panic。一般情况下，有两种方法会导致计数器设置为负数。第一种方法是：调用Add的时候传递一个负数。如果你能保证当前的计数器加上这个负数后还是大于等于0的话，也没有问题，否则就会导致panic。第二个方法是：调用Done方法的次数过多，超过了WaitGroup的计数值。使用WaitGroup的正确姿势是，预先确定好WaitGroup的计数值，然后调用相同次数的Done完成相应的任务。
+- 常见问题二：不期望的Add时机。
