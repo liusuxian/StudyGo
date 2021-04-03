@@ -38,5 +38,5 @@ func main() {
         factorial(&mu, 10) // 计算10的阶乘, 10!
     }()
 
-    select {}
+    time.Sleep(time.Minute)
 }
