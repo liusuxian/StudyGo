@@ -47,3 +47,20 @@ learning golang
 - RLocker：这个方法的作用是为读操作返回一个Locker接口的对象。它的Lock方法会调用RWMutex的RLock方法，它的Unlock方法会调用RWMutex的RUnlock方法。
 - 遇到可以明确区分reader和writer goroutine的场景，且有大量的并发读、少量的并发写，并且有强烈的性能需求，就可以考虑使用读写锁RWMutex替换Mutex。
 - Go标准库中的RWMutex设计是Write-preferring方案。一个正在阻塞的Lock调用会排除新的reader请求到锁。
+### RWMutex包含一个Mutex，以及四个辅助字段writerSem、readerSem、readerCount和readerWait。
+``` go
+type RWMutex struct {
+  w           Mutex   // 互斥锁解决多个writer的竞争
+  writerSem   uint32  // writer信号量
+  readerSem   uint32  // reader信号量
+  readerCount int32   // reader的数量
+  readerWait  int32   // writer等待完成的reader的数量
+}
+
+const rwmutexMaxReaders = 1 << 30
+```
+- 字段w：为writer的竞争锁而设计。
+- 字段readerCount：记录当前reader的数量（以及是否有writer竞争锁）。
+- 字段readerWait：记录writer请求锁时需要等待read完成的reader的数量。
+- 字段writerSem和字段readerSem：都是为了阻塞设计的信号量。
+- 常量rwmutexMaxReaders，定义了最大的reader数量。
