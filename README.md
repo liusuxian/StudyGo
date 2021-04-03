@@ -60,7 +60,7 @@ type RWMutex struct {
 const rwmutexMaxReaders = 1 << 30
 ```
 - 字段w：为writer的竞争锁而设计。
-- 字段readerCount：记录当前reader的数量（以及是否有writer竞争锁）。
+- 字段readerCount：记录当前reader的数量（以及是否有writer竞争锁）。没有writer竞争或持有锁时，readerCount和我们正常理解的reader的计数是一样的。如果有writer竞争锁或者持有锁时，那么readerCount不仅仅承担着reader的计数功能，还能够标识当前是否有writer竞争或持有锁。
 - 字段readerWait：记录writer请求锁时需要等待read完成的reader的数量。
 - 字段writerSem和字段readerSem：都是为了阻塞设计的信号量。
 - 常量rwmutexMaxReaders，定义了最大的reader数量。
