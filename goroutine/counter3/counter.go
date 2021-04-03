@@ -17,8 +17,8 @@ type Counter struct {
 // 加1的方法，内部使用互斥锁保护
 func (c *Counter) Incr() {
     c.Lock()
-    defer c.Unlock()
     c.count++
+    c.Unlock()
 }
 
 // 得到计数器的值，也需要锁保护
