@@ -36,3 +36,8 @@ learning golang
 - golang源码分析sync.Mutex概述：https://studygolang.com/articles/17017
 ### Mutex知识地图。
 ![avatar](https://static001.geekbang.org/resource/image/5a/0b/5ayy6cd9ec9fe0bcc13113302056ac0b.jpg)
+### 什么是RWMutex？
+- 标准库中的RWMutex是一个reader/writer互斥锁。RWMutex在某一时刻只能由任意数量的reader持有，或者是只被单个的writer持有。只要有一个线程在执行写操作，其它的线程都不能执行读写操作。
+- Lock/Unlock：写操作时调用的方法。如果锁已经被reader或者writer持有，那么Lock方法会一直阻塞，直到能获取到锁；Unlock则是配对的释放锁的方法。
+- RLock/RUnlock：读操作时调用的方法。如果锁已经被writer持有的话，RLock方法会一直阻塞，直到能获取到锁，否则就直接返回；而RUnlock是reader释放锁的方法。
+- RLocker：这个方法的作用是为读操作返回一个Locker接口的对象。它的Lock方法会调用RWMutex的RLock方法，它的Unlock方法会调用RWMutex的RUnlock方法。
