@@ -31,9 +31,8 @@ learning golang
 - 环路等待：一般来说，存在一组等待进程，P={P1，P2，…，PN}，P1 等待 P2 持有的资源，P2 等待 P3 持有的资源，依此类推，最后是 PN 等待 P1 持有的资源，这就形成了一个环路等待的死结。
 ### 锁的性能。
 - 锁是性能下降的“罪魁祸首”之一，所以，有效地降低锁的竞争，就能够很好地提高性能。因此，监控关键互斥锁上等待的 goroutine 的数量，是我们分析锁竞争的激烈程度的一个重要指标。
-### Mutex知识地图。
-![avatar](https://static001.geekbang.org/resource/image/5a/0b/5ayy6cd9ec9fe0bcc13113302056ac0b.jpg)
-
 ### 源码分析。
 - sync.mutex源代码分析：https://colobu.com/2018/12/18/dive-into-sync-mutex/
 - golang源码分析sync.Mutex概述：https://studygolang.com/articles/17017
+### Mutex知识地图。
+![avatar](https://static001.geekbang.org/resource/image/5a/0b/5ayy6cd9ec9fe0bcc13113302056ac0b.jpg)
