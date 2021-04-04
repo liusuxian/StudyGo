@@ -21,3 +21,6 @@ func main() {
 }
 ```
 - 如果非要使用struct作为key，我们要保证struct对象在逻辑上是不可变的，这样才会保证map的逻辑没有问题。
+- map是无序的，如果我们想要保证元素有序，比如按照元素插入的顺序进行遍历，可以使用辅助的数据结构，比如: https://github.com/elliotchance/orderedmap
+### 使用map的2种常见错误
+- 常见错误一：未初始化，和slice或者Mutex、RWmutex等struct类型不同，map对象必须在使用之前初始化。如果不初始化就直接赋值的话，会出现panic异常。
