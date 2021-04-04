@@ -163,4 +163,4 @@ func (o *Once) Done() bool {
 - 分离固定内容和非固定内容，使得固定的内容能被内联调用，从而优化执行过程。
 ### Once 在第一次使用之后，还能复制给其它变量使用吗？
 - Once被拷贝的过程中内部的已执行状态不会改变，所以Once不能通过拷贝多次执行。
-### Go语言inline内联的策略与限制：https://blog.csdn.net/hero_java/article/details/114029057。
+### Go语言inline内联的策略与限制：https://blog.csdn.net/hero_java/article/details/114029057
