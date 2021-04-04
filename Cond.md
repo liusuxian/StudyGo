@@ -18,6 +18,6 @@ type Cond
 ### Cond有三点特性是Channel无法替代的。
 - Cond和一个Locker关联，可以利用这个Locker对相关的依赖条件更改提供保护。
 - Cond可以同时支持Signal和Broadcast方法，而Channel只能同时支持其中一种。
-- Cond的Broadcast方法可以被重复调用。等待条件再次变成不满足的状态后，我们又可以调用Broadcast再次唤醒等待的goroutine。这也是Channel不能支持的，Channel被close掉了之后不支持再open。
+- Cond的Broadcast方法可以被重复调用（Signal也可以被重复调用）。等待条件再次变成不满足的状态后，我们又可以调用Broadcast再次唤醒等待的goroutine。这也是Channel不能支持的，Channel被close掉了之后不支持再open。
 ### Cond的知识地图。
 ![avatar](https://static001.geekbang.org/resource/image/47/5d/477157d2dbe1b7e4511f56c2c9c2105d.jpg)
