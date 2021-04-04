@@ -32,7 +32,3 @@ const rwmutexMaxReaders = 1 << 30
 - 坑点 3：释放未加锁的RWMutex，同Mutex。
 ### RWMutex的知识地图。
 ![avatar](https://github.com/liusuxian/learning_golang/blob/master/img/RWMutex.jpg)
-### 并发原语的实现，总是有些slowXXXX的方法，从XXXX方法中单独抽取出来，为什么要这么做？有什么好处？
-- 分离固定内容和非固定内容，使得固定的内容能被内联调用，从而优化执行过程。
-### Once 在第一次使用之后，还能复制给其它变量使用吗？
-- Once被拷贝的过程中内部的已执行状态不会改变，所以Once不能通过拷贝多次执行。
