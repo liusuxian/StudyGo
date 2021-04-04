@@ -157,3 +157,5 @@ func (o *Once) Done() bool {
     return atomic.LoadUint32((*uint32)(unsafe.Pointer(&o.Once))) == 1
 }
 ```
+### Once的知识地图。
+![avatar](https://github.com/liusuxian/learning_golang/blob/master/img/Once.jpg)
