@@ -28,3 +28,15 @@ func main() {
 ### 如何实现线程安全的map类型。
 - 避免map并发读写panic的方式之一就是加锁，考虑到读写性能，可以使用读写锁提供性能。
 - 分片加锁，更高效的并发map，虽然使用读写锁可以提供线程安全的map，但是在大量并发读写的情况下，锁的竞争会非常激烈。锁是性能下降的万恶之源之一。在并发编程中，我们的一条原则就是尽量减少锁的使用。一些单线程单进程的应用（比如Redis等），基本上不需要使用锁去解决并发线程访问的问题，所以可以取得很高的性能。但是对于Go开发的应用程序来说，并发是常用的一个特性，在这种情况下，我们能做的就是，尽量减少锁的粒度和锁的持有时间。减少锁的粒度常用的方法就是分片（Shard），将一把锁分成几把锁，每个锁控制一个分片。Go比较知名的分片并发map的实现是 [orcaman/concurrent-map](https://github.com/orcaman/concurrent-map)。
+### sync.Map的实现
+- 空间换时间。通过冗余的两个数据结构（只读的read字段、可写的dirty），来减少加锁对性能的影响。对只读字段（read）的操作不需要加锁。
+- 优先从read字段读取、更新、删除，因为对read字段的读取不需要锁。
+- 动态调整。miss次数多了之后，将dirty数据提升为read，避免总是从dirty中加锁读取。
+- double-checking。加锁之后先还要再检查read字段，确定真的不存在才操作dirty字段。
+- 延迟删除。删除一个键值只是打标记，只有在提升dirty字段为read字段的时候才清理删除的数据。
+### 在以下两个场景中使用sync.Map，会比使用map+RWMutex的方式，性能要好得多。
+- 只会增长的缓存系统中，一个key只写入一次而被读很多次。
+- 多个goroutine为不相交的键集读、写和重写键值对。
+### 扩展其它功能的map实现
+- 带有过期功能的 [timedmap](https://github.com/zekroTJA/timedmap)。
+- 使用红黑树实现的key有序的 [treemap](https://pkg.go.dev/github.com/emirpasic/gods/maps/treemap?utm_source=godoc)。
