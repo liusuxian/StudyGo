@@ -29,7 +29,7 @@
 ### 锁的性能。
 - 锁是性能下降的“罪魁祸首”之一，所以，有效地降低锁的竞争，就能够很好地提高性能。因此，监控关键互斥锁上等待的 goroutine 的数量，是我们分析锁竞争的激烈程度的一个重要指标。
 ### 源码分析。
-- sync.mutex源代码分析：https://colobu.com/2018/12/18/dive-into-sync-mutex/
-- golang源码分析sync.Mutex概述：https://studygolang.com/articles/17017
+- [sync.mutex源代码分析](https://colobu.com/2018/12/18/dive-into-sync-mutex/)。
+- [golang源码分析sync.Mutex概述](https://studygolang.com/articles/17017)。
 ### Mutex知识地图。
 ![avatar](https://github.com/liusuxian/learning_golang/blob/master/img/Mutex.jpg)
