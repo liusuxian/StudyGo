@@ -4,11 +4,11 @@
 - 标准库中的Cond并发原语初始化的时候，需要关联一个Locker接口的实例，一般我们使用Mutex或者RWMutex。Cond关联的Locker实例可以通过c.L访问，它内部维护着一个先入先出的等待队列。
 ``` go
 type Cond struct {
-	noCopy noCopy // noCopy是一个辅助结构，用来帮助vet检查用的类型，nocpoy是静态检查。
-	// L is held while observing or changing the condition
-	L Locker
-	notify  notifyList
-	checker copyChecker // copyChecker是一个辅助结构，可以在运行时检查Cond是否被复制使用。
+    noCopy noCopy // noCopy是一个辅助结构，用来帮助vet检查用的类型，nocpoy是静态检查。
+    // L is held while observing or changing the condition
+    L Locker
+    notify  notifyList
+    checker copyChecker // copyChecker是一个辅助结构，可以在运行时检查Cond是否被复制使用。
 }
 func NeWCond(l Locker) *Cond
 func (c *Cond) Broadcast()
