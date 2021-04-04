@@ -5,5 +5,4 @@ learning golang
 ### RWMutex 笔记在 RWMutex.md 中
 ### WaitGroup 笔记在 WaitGroup.md 中
 
-[Mutex][1]
-[1]: https://github.com/liusuxian/learning_golang/blob/master/Mutex.md
+[Mutex](https://github.com/liusuxian/learning_golang/blob/master/Mutex.md)
