@@ -44,3 +44,22 @@ once.Do(func() {
     conn, err = net.Dial("tcp", addr)
 })
 ```
+- Once常常用来初始化单例资源，或者并发访问只需初始化一次的共享资源，或者在测试的时候初始化一次测试资源。
+### 很值得学习的math/big/sqrt.go中实现的一个数据结构，它通过Once封装了一个只初始化一次的值。
+``` go
+// 值是3.0或者0.0的一个数据结构
+var threeOnce struct {
+    sync.Once
+    v *Float
+}
+
+// 返回此数据结构的值，如果还没有初始化为3.0，则初始化
+func three() *Float {
+    // 使用Once初始化
+    threeOnce.Do(func() {
+        threeOnce.v = NewFloat(3.0)
+    })
+    return threeOnce.v
+}
+```
+- 当使用Once的时候，可以尝试采用这种结构，将值和Once封装成一个新的数据结构，提供只初始化一次的值。
