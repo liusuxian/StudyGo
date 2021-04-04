@@ -10,3 +10,5 @@ learning golang
 [Cond笔记](https://github.com/liusuxian/learning_golang/blob/master/Cond.md)
 
 [Once笔记](https://github.com/liusuxian/learning_golang/blob/master/Once.md)
+
+[map笔记](https://github.com/liusuxian/learning_golang/blob/master/map.md)
