@@ -8,3 +8,5 @@ learning golang
 [WaitGroup笔记](https://github.com/liusuxian/learning_golang/blob/master/WaitGroup.md)
 
 [Cond笔记](https://github.com/liusuxian/learning_golang/blob/master/Cond.md)
+
+[Once笔记](https://github.com/liusuxian/learning_golang/blob/master/Once.md)
