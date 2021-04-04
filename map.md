@@ -21,7 +21,7 @@ func main() {
 }
 ```
 - 如果非要使用struct作为key，我们要保证struct对象在逻辑上是不可变的，这样才会保证map的逻辑没有问题。
-- map是无序的，如果我们想要保证元素有序，比如按照元素插入的顺序进行遍历，可以使用辅助的数据结构，比如: https://github.com/elliotchance/orderedmap
+- map是无序的，如果我们想要保证元素有序，比如按照元素插入的顺序进行遍历，可以使用辅助的数据结构，比如 <a href="https://github.com/elliotchance/orderedmap" target="_blank">orderedmap</a>。
 ### 使用map的2种常见错误。
 - 常见错误一：未初始化，和slice或者Mutex、RWmutex等struct类型不同，map对象必须在使用之前初始化。如果不初始化就直接赋值的话，会出现panic异常。从一个nil的map对象中获取值不会panic，而是会得到零值。有时候map作为一个struct字段的时候，就很容易忘记初始化。
 - 常见错误二：并发读写，如果没有注意到并发问题，程序在运行的时候就有可能出现并发读写导致的panic。Go内建的map对象不是线程（goroutine）安全的，并发读写的时候运行时会有检查，遇到并发问题就会导致panic。
