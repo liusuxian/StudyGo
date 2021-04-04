@@ -80,8 +80,8 @@ func (o *Once) Do(f func()) {
 - 第二种方法，使用一个互斥锁，这样初始化的时候如果有并发的goroutine，就会进入doSlow方法。互斥锁的机制保证只有一个goroutine进行初始化，同时利用双检查的机制（double-checking），再次判断o.done是否为0，如果为0，则是第一次执行，执行完毕后，就将o.done设置为1，然后释放锁。即使此时有多个goroutine同时进入了doSlow方法，因为双检查的机制，后续的goroutine会看到o.done的值为1，也不会再次执行f。这样既保证了并发的goroutine会等待f完成，而且还不会多次执行f。
 ``` go
 type Once struct {
+    sync.Mutex
     done uint32
-    m    Mutex
 }
 
 func (o *Once) Do(f func()) {
@@ -91,8 +91,8 @@ func (o *Once) Do(f func()) {
 }
 
 func (o *Once) doSlow(f func()) {
-    o.m.Lock()
-    defer o.m.Unlock()
+    o.Lock()
+    defer o.Unlock()
     // 双检查
     if o.done == 0 {
         defer atomic.StoreUint32(&o.done, 1)
@@ -102,4 +102,37 @@ func (o *Once) doSlow(f func()) {
 ```
 ### 使用Once可能出现的2种错误。
 - 第一种错误：死锁，Do方法仅会执行一次f，但是如果f中再次调用这个Once的Do方法的话，就会导致死锁的情况出现。这还不是无限递归的情况，而是的的确确的Lock的递归调用导致的死锁。想要避免这种情况的出现，就不要在f参数中调用当前的这个Once，不管是直接的还是间接的。
-- 第二种错误：未初始化，如果f方法执行的时候panic，或者f执行初始化资源的时候失败了，这个时候，Once还是会认为初次执行已经成功了，即使再次调用Do方法，也不会再次执行f。
+- 第二种错误：未初始化，如果f方法执行的时候panic，或者f执行初始化资源的时候失败了，这个时候，Once还是会认为初次执行已经成功了，即使再次调用Do方法，也不会再次执行f。那么这种初始化未完成的问题该怎么解决呢？我们可以自己实现一个类似Once的并发原语，既可以返回当前调用Do方法是否正确完成，还可以在初始化失败后调用Do方法再次尝试初始化，直到初始化成功才不再初始化了。
+``` go
+// 一个功能更加强大的Once
+type Once struct {
+    sync.Mutex
+    done uint32
+}
+
+// 传入的函数f有返回值error，如果初始化失败，需要返回失败的error
+// Do方法会把这个error返回给调用者
+func (o *Once) Do(f func() error) error {
+    // fast path
+    if atomic.LoadUint32(&o.done) == 1 {
+        return nil
+    }
+    return o.slowDo(f)
+}
+
+// 如果还没有初始化
+func (o *Once) slowDo(f func() error) error {
+    o.Lock()
+    defer o.Unlock()
+    var err error
+    // 双检查，还没有初始化
+    if o.done == 0 {
+        err = f()
+        // 初始化成功才将标记置为已初始化
+        if err == nil {
+            atomic.StoreUint32(&o.done, 1)
+        }
+    }
+    return err
+}
+```
