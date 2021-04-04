@@ -63,3 +63,35 @@ func three() *Float {
 }
 ```
 - 当使用Once的时候，可以尝试采用这种结构，将值和Once封装成一个新的数据结构，提供只初始化一次的值。
+### 如何实现一个Once？
+- 第一种方法，只需使用一个flag标记是否初始化过即可，用atomic原子操作这个flag，比如下面的实现，但是这个实现有一个很大的问题，就是如果参数f执行很慢的话，后续调用Do方法的goroutine虽然看到done已经设置为执行过了，但是获取某些初始化资源的时候可能会得到空的资源，因为f还没有执行完。
+``` go
+type Once struct {
+    done uint32
+}
+
+func (o *Once) Do(f func()) {
+    if !atomic.CompareAndSwapUint32(&o.done, 0, 1) {
+        return
+    }
+    f()
+}
+```
+- 第二种方法，使用一个互斥锁，这样初始化的时候如果有并发的goroutine，就会进入doSlow方法。互斥锁的机制保证只有一个goroutine进行初始化，同时利用双检查的机制（double-checking），再次判断o.done是否为0，如果为0，则是第一次执行，执行完毕后，就将o.done设置为1，然后释放锁。即使此时有多个goroutine同时进入了doSlow方法，因为双检查的机制，后续的goroutine会看到o.done的值为1，也不会再次执行f。这样既保证了并发的goroutine会等待f完成，而且还不会多次执行f。
+``` go
+func (o *Once) Do(f func()) {
+    if atomic.LoadUint32(&o.done) == 0 {
+        o.doSlow(f)
+    }
+}
+
+func (o *Once) doSlow(f func()) {
+    o.m.Lock()
+    defer o.m.Unlock()
+    // 双检查
+    if o.done == 0 {
+        defer atomic.StoreUint32(&o.done, 1)
+        f()
+    }
+}
+```
