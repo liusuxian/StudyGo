@@ -38,14 +38,24 @@ func (o *Once) slowDo(f func() error) error {
     return err
 }
 
+// Done 返回此Once是否执行成功过
+// 如果执行成功过则返回true
+// 如果没有执行成功过或者正在执行，返回false
+func (o *Once) Done() bool {
+    return atomic.LoadUint32(&o.done) == 1
+}
+
 func main() {
     var once Once
+    fmt.Println(once.Done()) //false
+
     // 第一个初始化函数
     f1 := func() error {
         fmt.Println("in f1")
         return nil
     }
-    _ = once.Do(f1) // 打印出 in f1
+    _ = once.Do(f1)          // 打印出 in f1
+    fmt.Println(once.Done()) //true
 
     // 第二个初始化函数
     f2 := func() error {
