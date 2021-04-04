@@ -37,7 +37,7 @@ func main() {
 ### 在以下两个场景中使用sync.Map，会比使用map+RWMutex的方式，性能要好得多。
 - 只会增长的缓存系统中，一个key只写入一次而被读很多次。
 - 多个goroutine为不相交的键集读、写和重写键值对。
-### 扩展其它功能的map实现
+### 扩展其它功能的map实现。
 - 带有过期功能的 [timedmap](https://github.com/zekroTJA/timedmap)。
 - 使用红黑树实现的key有序的 [treemap](https://pkg.go.dev/github.com/emirpasic/gods/maps/treemap?utm_source=godoc)。
 ### Map知识地图。
