@@ -32,4 +32,4 @@
 - sync.mutex源代码分析：https://colobu.com/2018/12/18/dive-into-sync-mutex/
 - golang源码分析sync.Mutex概述：https://studygolang.com/articles/17017
 ### Mutex知识地图。
-![avatar](https://static001.geekbang.org/resource/image/5a/0b/5ayy6cd9ec9fe0bcc13113302056ac0b.jpg)
+![avatar](https://github.com/liusuxian/learning_golang/blob/master/img/Mutex.jpg)
