@@ -40,3 +40,5 @@ func main() {
 ### 扩展其它功能的map实现
 - 带有过期功能的 [timedmap](https://github.com/zekroTJA/timedmap)。
 - 使用红黑树实现的key有序的 [treemap](https://pkg.go.dev/github.com/emirpasic/gods/maps/treemap?utm_source=godoc)。
+### Map知识地图。
+![avatar](https://github.com/liusuxian/learning_golang/blob/master/img/Map.jpg)
