@@ -3,15 +3,7 @@ package main
 import (
     "fmt"
     "sync"
-    "sync/atomic"
 )
-
-type Once struct {
-    done uint32
-    m    Mutex
-}
-
-
 
 func main() {
     var once sync.Once

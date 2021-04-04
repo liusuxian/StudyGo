@@ -79,6 +79,11 @@ func (o *Once) Do(f func()) {
 ```
 - 第二种方法，使用一个互斥锁，这样初始化的时候如果有并发的goroutine，就会进入doSlow方法。互斥锁的机制保证只有一个goroutine进行初始化，同时利用双检查的机制（double-checking），再次判断o.done是否为0，如果为0，则是第一次执行，执行完毕后，就将o.done设置为1，然后释放锁。即使此时有多个goroutine同时进入了doSlow方法，因为双检查的机制，后续的goroutine会看到o.done的值为1，也不会再次执行f。这样既保证了并发的goroutine会等待f完成，而且还不会多次执行f。
 ``` go
+type Once struct {
+    done uint32
+    m    Mutex
+}
+
 func (o *Once) Do(f func()) {
     if atomic.LoadUint32(&o.done) == 0 {
         o.doSlow(f)
