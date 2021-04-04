@@ -15,3 +15,9 @@ type Cond
 ### 使用Cond的2个常见错误。
 - 调用Wait的时候没有加锁。运行程序就会报释放未加锁的panic。出现这个问题的原因在于Wait方法的实现是把当前调用者加入到notify队列之中后会释放锁（如果不释放锁，其他Wait的调用者就没有机会加入到notify队列中了），然后一直等待；等调用者被唤醒之后，又会去争抢这把锁。如果调用Wait之前不加锁的话，就有可能Unlock一个未加锁的Locker。所以切记，调用Wait方法之前一定要加锁。
 - 只调用了一次Wait，没有检查等待条件是否满足，结果条件没满足，程序就继续执行了。出现这个问题的原因在于误以为Cond的使用，就像WaitGroup那样调用一下Wait方法等待那么简单。waiter goroutine被唤醒不等于等待条件被满足，只是有goroutine把它唤醒了而已，等待条件有可能已经满足了，也有可能不满足，我们需要进一步检查。你也可以理解为，等待者被唤醒，只是得到了一次检查的机会而已。
+### Cond有三点特性是Channel无法替代的。
+- Cond和一个Locker关联，可以利用这个Locker对相关的依赖条件更改提供保护。
+- Cond可以同时支持Signal和Broadcast方法，而Channel只能同时支持其中一种。
+- Cond的Broadcast方法可以被重复调用。等待条件再次变成不满足的状态后，我们又可以调用Broadcast再次唤醒等待的goroutine。这也是Channel不能支持的，Channel被close掉了之后不支持再open。
+### Cond的知识地图。
+![avatar](https://static001.geekbang.org/resource/image/47/5d/477157d2dbe1b7e4511f56c2c9c2105d.jpg)
