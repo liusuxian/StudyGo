@@ -20,3 +20,4 @@ func main() {
     fmt.Printf("再次查询m[key]=%s\n", m[key])
 }
 ```
+- 如果非要使用struct作为key，我们要保证struct对象在逻辑上是不可变的，这样才会保证map的逻辑没有问题。
