@@ -4,12 +4,12 @@
 - 在编译的代码中，增加了runtime.racefuncenter、runtime.raceread、runtime.racewrite、runtime.racefuncexit等检测data race的方法。通过这些插入的指令，Go race detector工具就能够成功地检测出data race问题了。
 ### go tool compile -S 文件名.go 查看汇编代码命令。
 ### Unlock坑点。
-- Unlock方法可以被任意的goroutine调用释放锁，即使是没持有这个互斥锁的goroutine，也可以进行这个操作。这是因为Mutex本身并没有包含持有这把锁的goroutine的信息，所以Unlock也不会对此进行检查。Mutex的这个设计一直保持至今。
+- Unlock方法可以被任意的goroutine调用释放锁，即使是未持有这个互斥锁的goroutine，也可以进行这个操作。这是因为Mutex本身并没有包含持有这把锁的goroutine的信息，所以Unlock也不会对此进行检查。Mutex的这个设计一直保持至今。
 - 所以我们在使用Mutex的时候，必须要保证goroutine尽可能不去释放自己未持有的锁，一定要遵循“谁申请，谁释放”的原则。在真实的实践中，我们使用互斥锁的时候，很少在一个方法中单独申请锁，而在另外一个方法中单独释放锁，一般都会在同一个方法中获取锁和释放锁。
 ### 如果Mutex已经被一个goroutine获取了锁，其它等待中的goroutine们只能一直等待。那么，等这个锁释放后，等待中的goroutine中哪一个会优先获取Mutex呢？
 - 互斥锁有两种状态：正常状态和饥饿状态。
 - 在正常状态下，所有等待锁的goroutine按照FIFO顺序等待。唤醒的goroutine不会直接拥有锁，而是会和新请求锁的goroutine竞争锁的拥有。新请求锁的goroutine具有优势：它正在CPU上执行，而且可能有好几个，所以刚刚唤醒的goroutine有很大可能在锁竞争中失败。在这种情况下，这个被唤醒的goroutine会加入到等待队列的前面。 如果一个等待的goroutine超过1ms没有获取锁，那么它将会把锁转变为饥饿模式。
-- 在饥饿模式下，锁的所有权将从unlock的gorutine直接交给交给等待队列中的第一个。新来的goroutine将不会尝试去获得锁，即使锁看起来是unlock状态, 也不会去尝试自旋操作，而是放在等待队列的尾部。
+- 在饥饿模式下，锁的所有权将从unlock的gorutine直接交给等待队列中的第一个。新来的goroutine将不会尝试去获得锁，即使锁看起来是unlock状态, 也不会去尝试自旋操作，而是放在等待队列的尾部。
 - 如果一个等待的goroutine获取了锁，并且满足一以下其中的任何一个条件：(1)它是队列中的最后一个；(2)它等待的时候小于1ms。它会将锁的状态转换为正常状态。
 - 正常状态有很好的性能表现，饥饿模式也是非常重要的，因为它能阻止尾部延迟的现象。
 ### 目前Mutex的state字段有几个意义，这几个意义分别是由哪些字段表示的？

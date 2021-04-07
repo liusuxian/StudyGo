@@ -12,3 +12,5 @@ learning golang
 [Once笔记](https://github.com/liusuxian/learning_golang/blob/master/Once.md)
 
 [Map笔记](https://github.com/liusuxian/learning_golang/blob/master/Map.md)
+
+[Pool笔记](https://github.com/liusuxian/learning_golang/blob/master/Pool.md)
