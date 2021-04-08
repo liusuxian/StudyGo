@@ -43,6 +43,6 @@ func main() {
 ### Map知识地图。
 ![avatar](https://github.com/liusuxian/learning_golang/blob/master/img/Map.jpg)
 ### 为什么sync.Map中的集合核心方法的实现中，如果read中项目不存在，加锁后还要双检查，再检查一次read？
-- 双检查主要是针对高并发的场景，第一次先用CAS快速尝试，失败后进行加锁，然后进行第二次CAS检查，再进行修改，在高并发的情况下，存在多个goroutine在修改同一个Key，第一次CAS都失败了，在竞争锁，如果不进行第二次CAS检查就直接修改，这个Key就会被多次修改。
+- 加锁之后先还要再检查read字段，确定真的不存在才操作dirty字段。
 ### sync.map元素删除的时候只是把它的值设置为nil，那么什么时候这个key才会真正从map对象中删除？
-- 真正删除key的操作是在数据从read往dirty迁移的过程中（往dirty写数据时，发现dirty没有数据，就会触发迁移），只迁移没有被标记为删除的KV。
+- 在提升dirty字段为read字段的时候才清理删除的数据。
