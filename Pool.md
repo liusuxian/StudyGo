@@ -75,3 +75,15 @@ func (p *PoolConn) Close() error {
     return p.c.put(p.Conn)
 }
 ```
+- 它的Pool是通过Channel实现的，空闲的连接放入到Channel中，这也是Channel的一个应用场景：
+``` go
+type channelPool struct {
+    // 存储连接池的channel
+    mu    sync.RWMutex
+    conns chan net.Conn
+
+    // net.Conn 的产生器
+    factory Factory
+}
+```
+### 数据库连接池。
