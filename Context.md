@@ -27,3 +27,19 @@ type Context interface {
 ### Context中实现了2个常用的生成顶层Context的方法。
 - context.Background()：返回一个非nil的、空的Context，没有任何值，不会被cancel，不会超时，没有截止日期。一般用在主函数、初始化、测试以及创建根Context的时候。
 - context.TODO()：返回一个非nil的、空的Context，没有任何值，不会被cancel，不会超时，没有截止日期。当你不清楚是否该用Context，或者目前还不知道要传递一些什么上下文信息的时候，就可以使用这个方法。
+- 两个方法底层的实现是一模一样的。
+### 在使用Context的时候，有一些约定俗成的规则。
+- 一般函数使用Context的时候，会把这个参数放在第一个参数的位置。
+- 从来不把nil当做Context类型的参数值，可以使用context.Background()创建一个空的上下文对象，也不要使用nil。
+- Context只用来临时做函数之间的上下文透传，不能持久化Context或者把Context长久保存。把Context持久化到数据库、本地文件或者全局变量、缓存中都是错误的用法。
+- key的类型不应该是字符串类型或者其它内建类型，否则容易在包之间使用Context时候产生冲突。使用WithValue时，key的类型应该是自己定义的类型。
+- 常常使用struct{}作为底层类型定义key的类型。对于exported key的静态类型，常常是接口或者指针。这样可以尽量减少内存分配。
+- 如果你能保证别人使用你的Context时不会和你定义的key冲突，那么key的类型就比较随意，因为你自己保证了不同包的key不会冲突，否则建议你尽量采用保守的unexported的类型。
+### 创建特殊用途Context的方法。
+- WithValue，WithValue基于parent Context生成一个新的Context，保存了一个key-value键值对。它常常用来传递上下文。WithValue方法其实是创建了一个类型为valueCtx的Context，它的类型定义如下。它持有一个key-value键值对，还持有parent的Context。它覆盖了Value方法，优先从自己的存储中检查这个key，不存在的话会从parent中继续检查。
+``` go
+type valueCtx struct {
+    Context
+    key, val interface{}
+}
+```
