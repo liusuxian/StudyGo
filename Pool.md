@@ -52,3 +52,26 @@ p.Close()
 // 当前池子中的连接的数量
 current := p.Len()
 ```
+- 它管理的是更通用的net.Conn，不局限于TCP连接。它通过把net.Conn包装成PoolConn，实现了拦截net.Conn的Close方法，避免了真正地关闭底层连接，而是把这个连接放回到池中：
+``` go
+type PoolConn struct {
+    net.Conn
+    mu       sync.RWMutex
+    c        *channelPool
+    unusable bool
+}
+
+//拦截Close
+func (p *PoolConn) Close() error {
+    p.mu.RLock()
+    defer p.mu.RUnlock()
+
+    if p.unusable {
+        if p.Conn != nil {
+            return p.Conn.Close()
+        }
+        return nil
+    }
+    return p.c.put(p.Conn)
+}
+```
