@@ -20,4 +20,4 @@
 - shared，可以由任意的P访问，但是只有本地的P才能pushHead/popHead，其它P可以popTail，相当于只有一个本地的P作为生产者（Producer），多个P作为消费者（Consumer），它是使用一个local-free的queue实现的。
 ### sync.Pool Get方法的具体实现原理。
 - 首先从本地的private字段中获取可用元素，因为没有锁，获取元素的过程会非常快，如果没有获取到，就尝试从本地的shared获取一个，如果还没有，会使用getSlow方法去其它的shared中“偷”一个。最后如果没有获取到，就尝试使用New函数创建一个新的。
-- getSlow方法，看名字也就知道了，它的耗时可能比较长。它首先要遍历所有的local，尝试从它们的shared弹出一个元素。如果还没找到一个，那么就开始对victim下手了。在vintim中查询可用元素的逻辑还是一样的，先从对应的victim的private查找，如果查不到，就再从其它victim的shared中查找。
+- getSlow方法，看名字也就知道了，它的耗时可能比较长。它首先要遍历所有的local，尝试从它们的shared弹出一个元素。如果还没找到一个，那么就开始对victim下手了。在victim中查询可用元素的逻辑还是一样的，先从对应的victim的private查找，如果查不到，就再从其它victim的shared中查找。
