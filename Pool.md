@@ -97,3 +97,4 @@ type channelPool struct {
 - [gammazero/workerpool](https://pkg.go.dev/github.com/gammazero/workerpool?utm_source=godoc) 可以无限制地提交任务，提供了更便利的Submit和SubmitWait方法提交任务，还可以提供当前的worker数和任务数以及关闭Pool的功能。
 - [ivpusic/grpool](https://pkg.go.dev/github.com/ivpusic/grpool?utm_source=godoc) grpool创建Pool的时候需要提供Worker的数量和等待执行的任务的最大数量，任务的提交是直接往Channel放入任务。
 - [dpaks/goworkers](https://pkg.go.dev/github.com/dpaks/goworkers?utm_source=godoc) 提供了更便利的Submit方法提交任务以及Worker数、任务数等查询方法、关闭Pool的方法。它的任务的执行结果需要在ResultChan和ErrChan中去获取，没有提供阻塞的方法，但是它可以在初始化的时候设置Worker的数量和任务数。
+- 类似的Worker Pool的实现非常多，比如还有 [panjf2000/ants]()、[Jeffail/tunny]()、[benmanns/goworker]()、[go-playground/pool]()、[Sherifabdlnaby/gpool]() 等第三方库。[pond]() 也是一个非常不错的Worker Pool，关注度目前不是很高，但是功能非常齐全。
