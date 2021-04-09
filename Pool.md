@@ -31,3 +31,24 @@
 - [oxtoacart/bpool](https://github.com/oxtoacart/bpool) 这也是比较常用的buffer池，它提供了以下几种类型的buffer。1、bpool.BufferPool：提供一个固定元素数量的buffer池，元素类型是bytes.Buffer，如果超过这个数量，Put的时候就丢弃，如果池中的元素都被取光了，会新建一个返回。Put回去的时候，不会检测buffer的大小。2、bpool.BytesPool：提供一个固定元素数量的byte slice池，元素类型是byte slice。Put回去的时候不检测slice的大小。3、bpool.SizedBufferPool：提供一个固定元素数量的buffer池，如果超过这个数量，Put的时候就丢弃，如果池中的元素都被取光了，会新建一个返回。Put回去的时候，会检测buffer的大小，超过指定的大小的话，就会创建一个新的满足条件的buffer放回去。bpool最大的特色就是能够保持池子中元素的数量，一旦Put的数量多于它的阈值，就会自动丢弃，而sync.Pool是一个没有限制的池子，只要Put就会收进去。bpool是基于Channel实现的，不像sync.Pool为了提高性能而做了很多优化，所以在性能上比不过sync.Pool。不过它提供了限制Pool容量的功能，所以如果你想控制Pool的容量的话，可以考虑这个库。
 ### 标准库中的http client池。
 - 标准库的http.Client是一个http client的库，可以用它来访问web服务器。为了提高性能，这个Client的实现也是通过池的方法来缓存一定数量的连接，以便后续重用这些连接。http.Client实现连接池的代码是在Transport类型中，它使用idleConn保存持久化的可重用的长连接。
+### TCP连接池。
+- 最常用的一个TCP连接池是fatih开发的[fatih/pool](https://github.com/fatih/pool)，虽然这个项目已经被fatih归档（Archived），不再维护了，但是因为它相当稳定了，我们可以开箱即用。即使你有一些特殊的需求，也可以fork它，然后自己再做修改。它的使用套路如下：
+``` go
+// 工厂模式，提供创建连接的工厂方法
+factory := func() (net.Conn, error) { return net.Dial("tcp", "127.0.0.1:4000") }
+// 创建一个tcp池，提供初始容量和最大容量以及工厂方法
+p, err := pool.NewChannelPool(5, 30, factory)
+// 获取一个连接
+conn, err := p.Get()
+// Close并不会真正关闭这个连接，而是把它放回池子，所以你不必显式地Put这个对象到池子中
+conn.Close()
+// 通过调用MarkUnusable, Close的时候就会真正关闭底层的tcp的连接了
+if pc, ok := conn.(*pool.PoolConn); ok {
+    pc.MarkUnusable()
+    pc.Close()
+}
+// 关闭池子就会关闭=池子中的所有的tcp连接
+p.Close()
+// 当前池子中的连接的数量
+current := p.Len()
+```
