@@ -91,6 +91,9 @@ type channelPool struct {
 ### Memcached Client连接池。
 - [gomemcache](https://github.com/bradfitz/gomemcache) Memchaced客户端，其中也用了连接池的方式池化Memcached的连接。gomemcache Client有一个freeconn的字段，用来保存空闲的连接。当一个请求使用完之后，它会调用putFreeConn放回到池子中，请求的时候，调用getFreeConn优先查询freeConn中是否有可用的连接。它采用Mutex+Slice实现Pool。
 ### Worker Pool。
-- goroutine是一个很轻量级的“纤程”，在一个服务器上可以创建十几万甚至几十万的goroutine。但是“可以”和“合适”之间还是有区别的，你会在应用中让几十万的goroutine一直跑吗？基本上是不会的。一个goroutine初始的栈大小是2048个字节，并且在需要的时候可以扩展到1GB，所以大量的goroutine还是很耗资源的。同时大量的goroutine对于调度和垃圾回收的耗时还是会有影响的，因此goroutine并不是越多越好。有的时候，我们就会创建一个Worker Pool来减少goroutine的使用。比如我们实现一个TCP服务器，如果每一个连接都要由一个独立的goroutine去处理的话，在大量连接的情况下，就会创建大量的goroutine，这个时候，我们就可以创建一个固定数量的goroutine（Worker），由这一组Worker去处理连接，比如fasthttp中的[Worker Pool](https://github.com/valyala/fasthttp/blob/9f11af296864153ee45341d3f2fe0f5178fd6210/workerpool.go#L16)。
+- goroutine是一个很轻量级的“纤程”，在一个服务器上可以创建十几万甚至几十万的goroutine。但是“可以”和“合适”之间还是有区别的，你会在应用中让几十万的goroutine一直跑吗？基本上是不会的。一个goroutine初始的栈大小是2048个字节，并且在需要的时候可以扩展到1GB，所以大量的goroutine还是很耗资源的。同时大量的goroutine对于调度和垃圾回收的耗时还是会有影响的，因此goroutine并不是越多越好。有的时候，我们就会创建一个Worker Pool来减少goroutine的使用。比如我们实现一个TCP服务器，如果每一个连接都要由一个独立的goroutine去处理的话，在大量连接的情况下，就会创建大量的goroutine，这个时候，我们就可以创建一个固定数量的goroutine（Worker），由这一组Worker去处理连接，比如fasthttp中的 [Worker Pool](https://github.com/valyala/fasthttp/blob/9f11af296864153ee45341d3f2fe0f5178fd6210/workerpool.go#L16)。
 - Worker的实现也是五花八门的：有些是在后台默默执行的，不需要等待返回结果；有些需要等待一批任务执行完；有些Worker Pool的生命周期和程序一样长；有些只是临时使用，执行完毕后，Pool就销毁了。
 - 大部分的Worker Pool都是通过Channel来缓存任务的，因为Channel能够比较方便地实现并发的保护，有的是多个Worker共享同一个任务Channel，有些是每个Worker都有一个独立的Channel。
+- [gammazero/workerpool](https://pkg.go.dev/github.com/gammazero/workerpool?utm_source=godoc) 可以无限制地提交任务，提供了更便利的Submit和SubmitWait方法提交任务，还可以提供当前的worker数和任务数以及关闭Pool的功能。
+- [ivpusic/grpool](https://pkg.go.dev/github.com/ivpusic/grpool?utm_source=godoc) grpool创建Pool的时候需要提供Worker的数量和等待执行的任务的最大数量，任务的提交是直接往Channel放入任务。
+- [dpaks/goworkers](https://pkg.go.dev/github.com/dpaks/goworkers?utm_source=godoc) 提供了更便利的Submit方法提交任务以及Worker数、任务数等查询方法、关闭Pool的方法。它的任务的执行结果需要在ResultChan和ErrChan中去获取，没有提供阻塞的方法，但是它可以在初始化的时候设置Worker的数量和任务数。
