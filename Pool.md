@@ -14,3 +14,26 @@
 ### Pool最重要的两个字段是local和victim。
 - 每次垃圾回收的时候，Pool会把victim中的对象移除，然后把local的数据给victim，这样的话，local就会被清空，而victim就像一个垃圾分拣站，里面的东西可能会被当做垃圾丢弃了，但是里面有用的东西也可能被捡回来重新使用。
 - victim中的元素如果被Get取走，那么这个元素就很幸运，因为它又“活”过来了。但是如果这个时候Get的并发不是很大，元素没有被Get取走，那么就会被移除掉，因为没有别人引用它的话，就会被垃圾回收掉。
+### 垃圾回收时sync.Pool的处理逻辑。
+``` go
+func poolCleanup() {
+    // 丢弃当前victim, STW所以不用加锁
+    for _, p := range oldPools {
+        p.victim = nil
+        p.victimSize = 0
+    }
+
+    // 将local复制给victim, 并将原local置为nil
+    for _, p := range allPools {
+        p.victim = p.local
+        p.victimSize = p.localSize
+        p.local = nil
+        p.localSize = 0
+    }
+
+    oldPools, allPools = allPools, nil
+}
+```
+- 所有当前主要的空闲可用的元素都存放在local字段中，请求元素时也是优先从local字段中查找可用的元素。local字段包含一个poolLocalInternal字段，并提供CPU缓存对齐，从而避免false sharing。而poolLocalInternal也包含两个字段：private和shared。
+- private，代表一个缓存的元素，而且只能由相应的一个P存取。因为一个P同时只能执行一个goroutine，所以不会有并发的问题。
+- shared，可以由任意的P访问，但是只有本地的P才能pushHead/popHead，其它P可以popTail，相当于只有一个本地的P作为生产者（Producer），多个P作为消费者（Consumer），它是使用一个local-free的queue列表实现的。
