@@ -26,6 +26,8 @@
 ### sync.Pool的坑。
 - 内存泄漏。在使用sync.Pool回收buffer的时候，一定要检查回收的对象的大小。如果buffer太大，就不要回收了，否则会有内存泄漏问题。
 - 内存浪费。要做到物尽其用，尽可能不浪费的话，我们可以将buffer池分成几层。首先小于512byte的元素的buffer占一个池子；其次小于1K byte大小的元素占一个池子；再次小于4K byte大小的元素占一个池子。这样分成几个池子以后，就可以根据需要，到所需大小的池子中获取buffer了。在标准库net/http/server.go中的代码中，就提供了2K和4K两个writer的池子。YouTube开源的知名项目vitess中提供了[bucketpool](https://github.com/vitessio/vitess/blob/master/go/bucketpool/bucketpool.go)的实现，它提供了更加通用的多层buffer池。你在使用的时候，只需要指定池子的最大和最小尺寸，vitess就会自动计算出合适的池子数。而且当你调用Get方法的时候，只需要传入你要获取的buffer的大小，就可以了。
-### 第三方库。
+### buffer池第三方库。
 - [bytebufferpool](https://github.com/valyala/bytebufferpool) 这是fasthttp作者valyala提供的一个buffer池，基本功能和sync.Pool相同。它的底层也是使用sync.Pool实现的，包括会检测最大的buffer，超过最大尺寸的buffer，就会被丢弃。这个库提供了校准（calibrate，用来动态调整创建元素的权重）的机制，可以“智能”地调整Pool的defaultSize和maxSize。一般来说，我们使用buffer size的场景比较固定，所用buffer的大小会集中在某个范围里。有了校准的特性，bytebufferpool就能够偏重于创建这个范围大小的buffer，从而节省空间。
 - [oxtoacart/bpool](https://github.com/oxtoacart/bpool) 这也是比较常用的buffer池，它提供了以下几种类型的buffer。1、bpool.BufferPool：提供一个固定元素数量的buffer池，元素类型是bytes.Buffer，如果超过这个数量，Put的时候就丢弃，如果池中的元素都被取光了，会新建一个返回。Put回去的时候，不会检测buffer的大小。2、bpool.BytesPool：提供一个固定元素数量的byte slice池，元素类型是byte slice。Put回去的时候不检测slice的大小。3、bpool.SizedBufferPool：提供一个固定元素数量的buffer池，如果超过这个数量，Put的时候就丢弃，如果池中的元素都被取光了，会新建一个返回。Put回去的时候，会检测buffer的大小，超过指定的大小的话，就会创建一个新的满足条件的buffer放回去。bpool最大的特色就是能够保持池子中元素的数量，一旦Put的数量多于它的阈值，就会自动丢弃，而sync.Pool是一个没有限制的池子，只要Put就会收进去。bpool是基于Channel实现的，不像sync.Pool为了提高性能而做了很多优化，所以在性能上比不过sync.Pool。不过它提供了限制Pool容量的功能，所以如果你想控制Pool的容量的话，可以考虑这个库。
+### 标准库中的http client池。
+- 标准库的http.Client是一个http client的库，可以用它来访问web服务器。为了提高性能，这个Client的实现也是通过池的方法来缓存一定数量的连接，以便后续重用这些连接。http.Client实现连接池的代码是在Transport类型中，它使用idleConn保存持久化的可重用的长连接。
