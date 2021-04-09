@@ -43,3 +43,5 @@ type valueCtx struct {
     key, val interface{}
 }
 ```
+- WithCancel，WithCancel方法返回parent的副本，只是副本中的Done Channel是新建的对象，它的类型是cancelCtx。我们常常在一些需要主动取消长时间的任务时，创建这种类型的Context，然后把这个Context传给长时间执行任务的goroutine。当需要中止任务时，我们就可以cancel这个Context，这样长时间执行任务的goroutine，就可以通过检查这个Context，知道Context已经被取消了。WithCancel返回值中的第二个值是一个cancel函数。其实这个返回值的名称（cancel）和类型（Cancel）也非常迷惑人。记住不是只有你想中途放弃，才去调用cancel，只要你的任务正常完成了，就需要调用cancel，这样这个Context才能释放它的资源（通知它的children处理cancel，从它的parent中把自己移除，甚至释放相关的goroutine）。很多人在使用这个方法的时候，都会忘记调用cancel，切记切记，而且一定尽早释放。当这个cancelCtx的cancel函数被调用的时候，或者parent的Done被close的时候，这个cancelCtx的Done才会被close。cancel是向下传递的，如果一个WithCancel生成的Context被cancel时，如果它的子Context（也有可能是孙，或者更低，依赖子的类型）也是cancelCtx类型的，就会被cancel，但是不会向上传递。parent Context不会因为子Context被cancel而cancel。
+- 
