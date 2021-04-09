@@ -21,3 +21,8 @@
 ### sync.Pool Get方法的具体实现原理。
 - 首先从本地的private字段中获取可用元素，因为没有锁，获取元素的过程会非常快，如果没有获取到，就尝试从本地的shared获取一个，如果还没有，会使用getSlow方法去其它的shared中“偷”一个。最后如果没有获取到，就尝试使用New函数创建一个新的。
 - getSlow方法，看名字也就知道了，它的耗时可能比较长。它首先要遍历所有的local，尝试从它们的shared弹出一个元素。如果还没找到一个，那么就开始对victim下手了。在victim中查询可用元素的逻辑还是一样的，先从对应的victim的private查找，如果查不到，就再从其它victim的shared中查找。
+### sync.Pool Put方法的具体实现原理。
+- Put的逻辑相对简单，优先设置本地private，如果private字段已经有值了，那么就把此元素push到本地队列中。
+### sync.Pool的坑。
+- 内存泄漏。在使用sync.Pool回收buffer的时候，一定要检查回收的对象的大小。如果buffer太大，就不要回收了，否则会有内存泄漏问题。
+- 内存浪费。要做到物尽其用，尽可能不浪费的话，我们可以将buffer池分成几层。首先小于512byte的元素的buffer占一个池子；其次小于1K byte大小的元素占一个池子；再次小于4K byte大小的元素占一个池子。这样分成几个池子以后，就可以根据需要，到所需大小的池子中获取buffer了。在标准库net/http/server.go中的代码中，就提供了2K和4K两个writer的池子。YouTube开源的知名项目vitess中提供了[bucketpool](https://github.com/vitessio/vitess/blob/master/go/bucketpool/bucketpool.go)的实现，它提供了更加通用的多层buffer池。你在使用的时候，只需要指定池子的最大和最小尺寸，vitess就会自动计算出合适的池子数。而且当你调用Get方法的时候，只需要传入你要获取的buffer的大小，就可以了。
