@@ -17,6 +17,7 @@ func foo(c *Counter) {
     fmt.Println("in foo")
 }
 
+// Mutex复制panic
 func main() {
     c := &Counter{}
     c.Lock()

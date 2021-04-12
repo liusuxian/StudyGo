@@ -18,6 +18,7 @@ func bar(l sync.Locker) {
     l.Unlock()
 }
 
+// 重入锁问题
 func main() {
     l := &sync.Mutex{}
     foo(l)

@@ -5,6 +5,7 @@ import (
     "sync"
 )
 
+// 不加锁的问题
 func main() {
     count := 0
     // 使用WaitGroup等待10个goroutine完成
