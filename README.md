@@ -16,3 +16,5 @@ learning golang
 [Pool笔记](https://github.com/liusuxian/learning_golang/blob/master/Pool.md)
 
 [Context笔记](https://github.com/liusuxian/learning_golang/blob/master/Context.md)
+
+[Atomic笔记](https://github.com/liusuxian/learning_golang/blob/master/Atomic.md)
