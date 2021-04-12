@@ -13,3 +13,8 @@
 ``` go
 func CompareAndSwapInt32(addr *int32, old, new int32) (swapped bool)
 ```
+- Swap如果不需要比较旧值，只是比较粗暴地替换的话，就可以使用Swap方法，它替换后还可以返回旧值。
+- Load方法会取出addr地址中的值，即使在多处理器、多核、有CPU cache的情况下，这个操作也能保证Load是一个原子操作。
+- Store方法会把一个值存入到指定的addr地址中，即使在多处理器、多核、有CPU cache的情况下，这个操作也能保证Store是一个原子操作。别的goroutine通过Load读取出来，不会看到存取了一半的值。
+- atomic还提供了一个特殊的类型：Value。它可以原子地存取对象类型，但也只能存取，不能CAS和Swap，常常用在配置变更等场景中。
+### 第三方库的扩展。
