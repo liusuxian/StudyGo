@@ -19,7 +19,7 @@ func CompareAndSwapInt32(addr *int32, old, new int32) (swapped bool)
 - atomic还提供了一个特殊的类型：Value。它可以原子地存取对象类型，但也只能存取，不能CAS和Swap，常常用在配置变更等场景中。
 ### 第三方库的扩展。
 - [uber-go/atomic](https://github.com/uber-go/atomic) 它定义和封装了几种与常见类型相对应的原子操作类型，这些类型提供了原子操作的方法。这些类型包括Bool、Duration、Error、Float64、Int32、Int64、String、Uint32、Uint64等。比如Bool类型，提供了CAS、Store、Swap、Toggle等原子方法，还提供String、MarshalJSON、UnmarshalJSON等辅助方法。
-### 使用Atomic实现Lock-Free queue
+### 使用Atomic实现Lock-Free queue。
 ``` go
 package queue
 
