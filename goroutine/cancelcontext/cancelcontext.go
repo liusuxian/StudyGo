@@ -15,8 +15,25 @@ func isCancelled(ctx context.Context) bool {
     }
 }
 
+func task(ctx context.Context) {
+    i := 1
+    for {
+        select {
+        case <-ctx.Done():
+            fmt.Println("Gracefully exit")
+            fmt.Println(ctx.Err())
+            return
+        default:
+            fmt.Println(i)
+            time.Sleep(time.Second * 1)
+            i++
+        }
+    }
+}
+
 func main() {
-    ctx, cancel := context.WithCancel(context.Background())
+    rootCtx := context.Background()
+    cancelCtx1, cancelFunc1 := context.WithCancel(rootCtx)
     for i := 0; i < 5; i++ {
         go func(ctx context.Context, x int) {
             for {
@@ -26,8 +43,14 @@ func main() {
                 time.Sleep(time.Millisecond * 5)
             }
             fmt.Println(x, "Cancelled")
-        }(ctx, i)
+        }(cancelCtx1, i)
     }
-    cancel()
+    cancelFunc1()
     time.Sleep(time.Second)
+
+    cancelCtx, cancelFunc := context.WithCancel(rootCtx)
+    go task(cancelCtx)
+    time.Sleep(time.Second * 3)
+    cancelFunc()
+    time.Sleep(time.Second * 1)
 }
