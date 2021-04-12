@@ -18,3 +18,84 @@ func CompareAndSwapInt32(addr *int32, old, new int32) (swapped bool)
 - Store方法会把一个值存入到指定的addr地址中，即使在多处理器、多核、有CPU cache的情况下，这个操作也能保证Store是一个原子操作。别的goroutine通过Load读取出来，不会看到存取了一半的值。
 - atomic还提供了一个特殊的类型：Value。它可以原子地存取对象类型，但也只能存取，不能CAS和Swap，常常用在配置变更等场景中。
 ### 第三方库的扩展。
+- [uber-go/atomic](https://github.com/uber-go/atomic) 它定义和封装了几种与常见类型相对应的原子操作类型，这些类型提供了原子操作的方法。这些类型包括Bool、Duration、Error、Float64、Int32、Int64、String、Uint32、Uint64等。比如Bool类型，提供了CAS、Store、Swap、Toggle等原子方法，还提供String、MarshalJSON、UnmarshalJSON等辅助方法。
+### 使用atomic实现Lock-Free queue
+``` go
+package queue
+
+import (
+    "sync/atomic"
+    "unsafe"
+)
+
+// lock-free的queue
+type LKQueue struct {
+    head unsafe.Pointer
+    tail unsafe.Pointer
+}
+
+// 通过链表实现，这个数据结构代表链表中的节点
+type node struct {
+    value interface{}
+    next  unsafe.Pointer
+}
+
+func NewLKQueue() *LKQueue {
+    n := unsafe.Pointer(&node{})
+    return &LKQueue{head: n, tail: n}
+}
+
+// 入队
+func (q *LKQueue) Enqueue(v interface{}) {
+    n := &node{value: v}
+    for {
+        tail := load(&q.tail)
+        next := load(&tail.next)
+        if tail == load(&q.tail) { // 尾还是尾
+            if next == nil { // 还没有新数据入队
+                if cas(&tail.next, next, n) { //增加到队尾
+                    cas(&q.tail, tail, n) //入队成功，移动尾巴指针
+                    return
+                }
+            } else { // 已有新数据加到队列后面，需要移动尾指针
+                cas(&q.tail, tail, next)
+            }
+        }
+    }
+}
+
+// 出队，没有元素则返回nil
+func (q *LKQueue) Dequeue() interface{} {
+    for {
+        head := load(&q.head)
+        tail := load(&q.tail)
+        next := load(&head.next)
+        if head == load(&q.head) { // head还是那个head
+            if head == tail { // head和tail一样
+                if next == nil { // 说明是空队列
+                    return nil
+                }
+                // 只是尾指针还没有调整，尝试调整它指向下一个
+                cas(&q.tail, tail, next)
+            } else {
+                // 读取出队的数据
+                v := next.value
+                // 既然要出队了，头指针移动到下一个
+                if cas(&q.head, head, next) {
+                    return v // Dequeue is done.  return
+                }
+            }
+        }
+    }
+}
+
+// 将unsafe.Pointer原子加载转换成node
+func load(p *unsafe.Pointer) (n *node) {
+    return (*node)(atomic.LoadPointer(p))
+}
+
+// 封装CAS,避免直接将*node转换成unsafe.Pointer
+func cas(p *unsafe.Pointer, old, new *node) (ok bool) {
+    return atomic.CompareAndSwapPointer(p, unsafe.Pointer(old), unsafe.Pointer(new))
+}
+```
