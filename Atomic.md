@@ -1,11 +1,11 @@
 ### 原子操作的基础知识。
 - Package sync/atomic实现了同步算法底层的原子的内存操作原语，我们把它叫做原子操作原语，它提供了一些实现原子操作的方法。之所以叫原子操作，是因为一个原子在执行的时候，其它线程不会看到执行一半的操作结果。在其它线程看来，原子操作要么执行完了，要么还没有执行，就像一个最小的粒子-原子一样，不可分割。
-### atomic原子操作的应用场景。
+### Atomic原子操作的应用场景。
 - 不涉及对资源复杂的竞争逻辑。
 - 实现配置对象的更新和加载。
 - 可以使用atomic实现自己定义的基本并发原语。
 - 实现lock-free数据结构的基石。
-### atomic提供的方法。
+### Atomic提供的方法。
 - atomic为了支持int32、int64、uint32、uint64、uintptr、Pointer（Add 方法不支持）类型，分别提供了AddXXX、CompareAndSwapXXX、SwapXXX、LoadXXX、StoreXXX等方法。
 - atomic操作的对象是一个地址，你需要把可寻址的变量的地址作为参数传递给方法，而不是把变量的值传递给方法。
 - Add方法就是给第一个参数地址中的值增加一个delta值。对于有符号的整数来说，delta可以是一个负数，相当于减去一个值。对于无符号的整数和uintptr类型来说，可以利用计算机补码的规则，把减法变成加法。以uint32类型为例：AddUint32(&x, ^uint32(c-1))。尤其是减1这种特殊的操作，我们可以简化为：AddUint32(&x, ^uint32(0))。
@@ -19,7 +19,7 @@ func CompareAndSwapInt32(addr *int32, old, new int32) (swapped bool)
 - atomic还提供了一个特殊的类型：Value。它可以原子地存取对象类型，但也只能存取，不能CAS和Swap，常常用在配置变更等场景中。
 ### 第三方库的扩展。
 - [uber-go/atomic](https://github.com/uber-go/atomic) 它定义和封装了几种与常见类型相对应的原子操作类型，这些类型提供了原子操作的方法。这些类型包括Bool、Duration、Error、Float64、Int32、Int64、String、Uint32、Uint64等。比如Bool类型，提供了CAS、Store、Swap、Toggle等原子方法，还提供String、MarshalJSON、UnmarshalJSON等辅助方法。
-### 使用atomic实现Lock-Free queue
+### 使用Atomic实现Lock-Free queue
 ``` go
 package queue
 
@@ -99,3 +99,5 @@ func cas(p *unsafe.Pointer, old, new *node) (ok bool) {
     return atomic.CompareAndSwapPointer(p, unsafe.Pointer(old), unsafe.Pointer(new))
 }
 ```
+### Atomic的知识地图。
+![avatar](https://github.com/liusuxian/learning_golang/blob/master/img/Atomic.jpg)
