@@ -29,8 +29,7 @@ func (v *Value) CompareAndSwap(old, new interface{}) (swapped bool) {
     newp := (*ifaceWords)(unsafe.Pointer(&new))
     fmt.Println(old, new)
     fmt.Println(typ, oldp, newp)
-    data := atomic.LoadPointer(&newp.data)
-    vv := (*string)(data)
+    vv := (*string)(newp.data)
     *vv = "lsx"
     fmt.Println(old, new)
     return false
