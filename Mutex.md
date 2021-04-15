@@ -14,6 +14,7 @@
 - 正常状态有很好的性能表现，饥饿模式也是非常重要的，因为它能阻止尾部延迟的现象。
 ### 目前Mutex的state字段有几个意义，这几个意义分别是由哪些字段表示的？
 <img src="https://github.com/liusuxian/learning_golang/blob/master/img/Mutex1.jpg" width = "60%" height = "60%" alt="image-name"/>
+
 - 前三个bit分别为mutexLocked（持有锁的标记）、mutexWoken（唤醒标记）、mutexStarving（饥饿标记），剩余bit表示mutexWaiter（阻塞等待的waiter数量）
 ### 等待一个Mutex的goroutine数最大是多少？是否能满足现实的需求？
 - 单从程序来看，可以支持1<<(32-3) -1 ，约0.5Billion个，其中32为state的类型int32，3位waiter字段的shift，考虑到实际goroutine初始化的空间为2K，0.5Billin * 2K达到了1TB，单从内存空间来说已经要求极高了，当前的设计肯定可以满足了。
