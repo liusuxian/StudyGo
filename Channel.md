@@ -71,3 +71,11 @@ for range ch {
 ### chan数据结构。
 - chan类型的数据结构如下图所示，它的数据类型是[runtime.hchan](https://github.com/golang/go/blob/master/src/runtime/chan.go#L32)。
 ![avatar](https://github.com/liusuxian/learning_golang/blob/master/img/Channel.jpg)
+- qcount：代表chan中已经接收但还没被取走的元素的个数。内建函数len可以返回这个字段的值。
+- dataqsiz：队列的大小。chan使用一个循环队列来存放元素，循环队列很适合这种生产者-消费者的场景。
+- buf：存放元素的循环队列的buffer。
+- elemtype和elemsize：chan中元素的类型和size。因为chan一旦声明，它的元素类型是固定的，即普通类型或者指针类型，所以元素大小也是固定的。
+- sendx：处理发送数据的指针在buf中的位置。一旦接收了新的数据，指针就会加上elemsize移向下一个位置。buf的总大小是elemsize的整数倍，而且buf是一个循环列表。
+- recvx：处理接收请求时的指针在buf中的位置。一旦取出数据，此指针会移动到下一个位置。
+- recvq：chan是多生产者多消费者的模式，如果消费者因为没有数据可读而被阻塞了，就会被加入到recvq队列中。
+- sendq：如果生产者因为buf满了而阻塞，会被加入到sendq队列中。
