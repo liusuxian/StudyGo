@@ -43,3 +43,28 @@ x := <-ch // 把接收的一条数据赋值给变量x
 foo(<-ch) // 把接收的一个的数据作为参数传给函数
 <-ch // 丢弃接收的一条数据
 ```
+### 其它操作。
+- Go内建的函数close、cap、len都可以操作chan类型：close会把chan关闭掉，cap返回chan的容量，len返回chan中缓存的还未被取走的元素数量。send和recv都可以作为select语句的case clause，如下面的例子：
+``` go
+func main() {
+    ch := make(chan int, 10)
+    for i := 0; i < 10; i++ {
+        select {
+        case ch <- i:
+        case v := <-ch:
+            fmt.Println(v)
+        }
+    }
+}
+```
+- chan还可以应用于for-range语句中，比如：
+``` go
+for v := range ch {
+    fmt.Println(v)
+}
+```
+- 或者是忽略读取的值，只是清空chan：
+``` go
+for range ch {
+}
+```
