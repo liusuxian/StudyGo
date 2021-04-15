@@ -80,3 +80,5 @@ for range ch {
 - recvx：处理接收请求时的指针在buf中的位置。一旦取出数据，此指针会移动到下一个位置。
 - recvq：chan是多生产者多消费者的模式，如果消费者因为没有数据可读而被阻塞了，就会被加入到recvq队列中。
 - sendq：如果生产者因为buf满了而阻塞，会被加入到sendq队列中。
+### 初始化。
+- Go在编译的时候，会根据容量的大小选择调用makechan64，还是makechan。makechan64只是做了size检查，底层还是调用makechan实现的。makechan的目标就是生成hchan对象。
