@@ -82,3 +82,7 @@ for range ch {
 - sendq：如果生产者因为buf满了而阻塞，会被加入到sendq队列中。
 ### 初始化。
 - Go在编译的时候，会根据容量的大小选择调用makechan64还是makechan。makechan64只是做了size检查，底层还是调用makechan实现的。makechan的目标就是生成hchan对象。
+### send。
+- Go在编译发送数据给chan的时候，会把send语句转换成chansend1函数，chansend1函数会调用chansend。如果chan是nil的话，就把调用者阻塞住。往一个已经满了的chan实例发送数据时，并且想不阻塞当前调用，那么直接返回。chansend1方法在调用chansend的时候设置了阻塞参数。如果chan已经被close了，再往里面发送数据的话会panic。如果等待队列中有等待的receiver，那么就把它从队列中弹出，然后直接把数据交给它，而不需要放入到buf中，速度可以更快一些。
+### recv。
+- 在处理从chan中接收数据时，Go会把代码转换成chanrecv1函数，如果要返回两个返回值，会转换成chanrecv2，chanrecv1函数和chanrecv2会调用chanrecv。
