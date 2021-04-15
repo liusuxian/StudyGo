@@ -70,7 +70,7 @@ for range ch {
 ```
 ### chan数据结构。
 - chan类型的数据结构如下图所示，它的数据类型是[runtime.hchan](https://github.com/golang/go/blob/master/src/runtime/chan.go#L32)。
-<img src="https://github.com/liusuxian/learning_golang/blob/master/img/Channel.jpg" width = "300" height = "200" alt="图片名称" align=center/>
+<img src="https://github.com/liusuxian/learning_golang/blob/master/img/Channel.jpg" max-width=80% align=center/>
 
 
 ![avatar](https://github.com/liusuxian/learning_golang/blob/master/img/Channel.jpg =100x100)
