@@ -68,3 +68,6 @@ for v := range ch {
 for range ch {
 }
 ```
+### chan数据结构。
+- chan类型的数据结构如下图所示，它的数据类型是[runtime.hchan](https://github.com/golang/go/blob/master/src/runtime/chan.go#L32)。
+![avatar](https://github.com/liusuxian/learning_golang/blob/master/img/Channel.jpg)
