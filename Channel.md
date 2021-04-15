@@ -85,4 +85,4 @@ for range ch {
 ### send。
 - Go在编译发送数据给chan的时候，会把send语句转换成chansend1函数，chansend1函数会调用chansend。如果chan是nil的话，就把调用者阻塞住。如果往一个已经满了的chan实例发送数据时，并且想不阻塞当前调用，那么直接返回。chansend1方法在调用chansend的时候设置了阻塞参数。如果chan已经被close了，再往里面发送数据的话会panic。如果等待队列中有等待的receiver，那么就把它从队列中弹出，然后直接把数据交给它，而不需要放入到buf中，速度可以更快一些。如果当前没有receiver，需要把数据放入到buf中，放入之后就成功返回了。如果buf满了，发送者的goroutine就会加入到发送者的等待队列中，直到被唤醒。这个时候数据或者被取走了，或者chan被close了。
 ### recv。
-- 在处理从chan中接收数据时，Go会把代码转换成chanrecv1函数，如果要返回两个返回值，会转换成chanrecv2，chanrecv1函数和chanrecv2会调用chanrecv。
+- 在处理从chan中接收数据时，Go会把代码转换成chanrecv1函数，如果要返回两个返回值，会转换成chanrecv2，chanrecv1函数和chanrecv2会调用chanrecv。chanrecv1和chanrecv2传入的block参数的值是true，都是阻塞方式。chan为nil的情况和send一样，从nil chan中接收（读取、获取）数据时，调用者会被永远阻塞。如果chan已经被close了，并且队列中没有缓存的元素，那么返回true、false。
