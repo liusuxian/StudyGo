@@ -33,9 +33,9 @@ func (wg *WaitGroup) state() (statep *uint64, semap *uint32) {
 - noCopy的辅助字段，主要就是辅助vet工具检查是否通过copy赋值这个WaitGroup实例。如果你想要自己定义的数据结构不被复制使用，或者说不能通过vet工具检查出复制使用的报警，就可以通过嵌入noCopy这个数据类型来实现。noCopy是静态检查。
 - state1，一个具有复合意义的字段，包含WaitGroup的计数、阻塞在检查点的waiter数和信号量。
 - 因为对64位整数的原子操作要求整数的地址是64位对齐的，所以针对64位和32位环境的state字段的组成是不一样的。在64位环境下，state1的第一个元素是waiter数，第二个元素是WaitGroup的计数值，第三个元素是信号量。如图。
-<img src="https://github.com/liusuxian/learning_golang/blob/master/img/WaitGroup1.jpg" width = "50%" height = "50%" alt="image-name"/>
+<img src="https://github.com/liusuxian/learning_golang/blob/master/img/WaitGroup1.jpg" width = "60%" height = "60%" alt="image-name"/>
 - 在32位环境下，如果state1不是64位对齐的地址，那么state1的第一个元素是信号量，后两个元素分别是waiter数和计数值。如图。
-<img src="https://github.com/liusuxian/learning_golang/blob/master/img/WaitGroup2.jpg" width = "50%" height = "50%" alt="image-name"/>
+<img src="https://github.com/liusuxian/learning_golang/blob/master/img/WaitGroup2.jpg" width = "60%" height = "60%" alt="image-name"/>
 ### 使用WaitGroup时的常见错误。
 - 常见问题一：计数器设置为负值。WaitGroup的计数器的值必须大于等于0。我们在更改这个计数值的时候，WaitGroup会先做检查，如果计数值被设置为负数，就会导致panic。一般情况下，有两种方法会导致计数器设置为负数。第一种方法是：调用Add的时候传递一个负数。如果你能保证当前的计数器加上这个负数后还是大于等于0的话，也没有问题，否则就会导致panic。第二个方法是：调用Done方法的次数过多，超过了WaitGroup的计数值。使用WaitGroup的正确姿势是，预先确定好WaitGroup的计数值，然后调用相同次数的Done完成相应的任务。
 - 常见问题二：不期望的Add时机。在使用WaitGroup的时候，你一定要遵循的原则就是，等所有的Add方法调用之后再调用Wait，否则就可能导致panic或者不期望的结果。
@@ -47,4 +47,4 @@ func (wg *WaitGroup) state() (statep *uint64, semap *uint32) {
 - 不做多余的Done方法调用，保证Add的计数值和Done方法调用的数量是一样的。
 - 不遗漏Done方法的调用，否则会导致Wait hang住无法返回。
 ### WaitGroup的知识地图。
-<img src="https://github.com/liusuxian/learning_golang/blob/master/img/WaitGroup3.jpg" width = "50%" height = "50%" alt="image-name"/>
+<img src="https://github.com/liusuxian/learning_golang/blob/master/img/WaitGroup3.jpg" width = "60%" height = "60%" alt="image-name"/>
