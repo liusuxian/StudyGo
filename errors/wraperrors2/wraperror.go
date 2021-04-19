@@ -6,7 +6,7 @@ import (
 )
 
 func test0() error {
-    return errors.New("test0 error")
+    return errors.New("main: test0 error")
 }
 
 func test1() error {
@@ -18,7 +18,7 @@ func test1() error {
 }
 
 func test00() error {
-    return errors.Errorf("%s error\n", "test00")
+    return errors.Errorf("main: %s error\n", "test00")
 }
 
 func test11() error {

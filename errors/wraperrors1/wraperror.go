@@ -25,7 +25,7 @@ func readConfig() ([]byte, error) {
 func main() {
     _, err := readConfig()
     if err != nil {
-        fmt.Printf("original error: %T %v\n", xerrors.Cause(err), xerrors.Cause(err))
+        fmt.Printf("original error: %T, %v\n", xerrors.Cause(err), xerrors.Cause(err))
         fmt.Printf("stack trace: %+v\n", err)
     }
 }
