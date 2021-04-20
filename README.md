@@ -1,6 +1,8 @@
 # learning_golang
 learning golang
 
+[GoReferences](https://github.com/liusuxian/learning_golang/blob/master/GoReferences.md)
+
 [Mutex笔记](https://github.com/liusuxian/learning_golang/blob/master/Mutex.md)
 
 [RWMutex笔记](https://github.com/liusuxian/learning_golang/blob/master/RWMutex.md)
