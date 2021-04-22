@@ -1,5 +1,5 @@
 # StudyGo
-learning golang
+StudyGo
 
 [GoReferences](https://github.com/liusuxian/StudyGo/blob/master/GoReferences.md)
 
