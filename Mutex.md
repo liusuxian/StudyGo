@@ -17,7 +17,7 @@
 - 如果一个等待的goroutine获取了锁，并且满足一以下其中的任何一个条件：(1)它是队列中的最后一个；(2)它等待的时候小于1ms。它会将锁的状态转换为正常状态。
 - 正常状态有很好的性能表现，饥饿模式也是非常重要的，因为它能阻止尾部延迟的现象。
 ### 目前Mutex的state字段有几个意义，这几个意义分别是由哪些字段表示的？
-<img src="https://github.com/liusuxian/learning_golang/blob/master/img/Mutex1.jpg" width = "60%" height = "60%" alt="image-name"/>
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Mutex1.jpg" width = "60%" height = "60%" alt="image-name"/>
 
 - 前三个bit分别为mutexLocked（持有锁的标记）、mutexWoken（唤醒标记）、mutexStarving（饥饿标记），剩余bit表示mutexWaiter（阻塞等待的waiter数量）
 ### 等待一个Mutex的goroutine数最大是多少？是否能满足现实的需求？
@@ -38,4 +38,4 @@
 - [sync.mutex源代码分析](https://colobu.com/2018/12/18/dive-into-sync-mutex/)。
 - [golang源码分析sync.Mutex概述](https://studygolang.com/articles/17017)。
 ### Mutex知识地图。
-<img src="https://github.com/liusuxian/learning_golang/blob/master/img/Mutex.jpg" width = "60%" height = "60%" alt="image-name"/>
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Mutex.jpg" width = "60%" height = "60%" alt="image-name"/>

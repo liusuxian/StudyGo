@@ -70,7 +70,7 @@ for range ch {
 ```
 ### chan数据结构。
 - chan类型的数据结构如下图所示，它的数据类型是[runtime.hchan](https://github.com/golang/go/blob/master/src/runtime/chan.go#L32)。
-<img src="https://github.com/liusuxian/learning_golang/blob/master/img/Channel.jpg" width = "60%" height = "60%" alt="image-name"/>
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Channel.jpg" width = "60%" height = "60%" alt="image-name"/>
 
 - qcount：代表chan中已经接收但还没被取走的元素的个数。内建函数len可以返回这个字段的值。
 - dataqsiz：队列的大小。chan使用一个循环队列来存放元素，循环队列很适合这种生产者-消费者的场景。

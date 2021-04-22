@@ -41,7 +41,7 @@ func main() {
 - 带有过期功能的 [timedmap](https://github.com/zekroTJA/timedmap)。
 - 使用红黑树实现的key有序的 [treemap](https://pkg.go.dev/github.com/emirpasic/gods/maps/treemap?utm_source=godoc)。
 ### Map知识地图。
-<img src="https://github.com/liusuxian/learning_golang/blob/master/img/Map.jpg" width = "60%" height = "60%" alt="image-name"/>
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Map.jpg" width = "60%" height = "60%" alt="image-name"/>
 
 ### 为什么sync.Map中的集合核心方法的实现中，如果read中项目不存在，加锁后还要双检查，再检查一次read？
 - 加锁之后先还要再检查read字段，确定真的不存在才操作dirty字段。

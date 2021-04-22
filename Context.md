@@ -50,4 +50,4 @@ type valueCtx struct {
 - 我们经常使用Context来取消一个goroutine的运行，这是Context最常用的场景之一，Context也被称为goroutine生命周期范围（goroutine-scoped）的Context，把Context传递给goroutine。但是goroutine需要尝试检查Context的Done是否关闭了。
 - 如果要为Context实现一个带超时功能的调用，比如访问远程的一个微服务，超时并不意味着你会通知远程微服务已经取消了这次调用，大概率的实现只是避免客户端的长时间等待，远程的服务器依然还执行着你的请求。所以有时候Context并不会减少对服务器的请求负担。如果在Context被cancel的时候，你能关闭和服务器的连接，中断和数据库服务器的通讯、停止对本地文件的读写，那么这样的超时处理，同时能减少对服务调用的压力，但是这依赖于你对超时的底层处理机制。
 ### Context知识地图。
-<img src="https://github.com/liusuxian/learning_golang/blob/master/img/Context.jpg" width = "60%" height = "60%" alt="image-name"/>
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Context.jpg" width = "60%" height = "60%" alt="image-name"/>

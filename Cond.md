@@ -26,4 +26,4 @@ func (c *Cond) Wait()
 - Cond可以同时支持Signal和Broadcast方法，而Channel只能同时支持其中一种。
 - Cond的Broadcast方法可以被重复调用（Signal也可以被重复调用）。等待条件再次变成不满足的状态后，我们又可以调用Broadcast再次唤醒等待的goroutine。这也是Channel不能支持的，Channel被close掉了之后不支持再open。
 ### Cond的知识地图。
-<img src="https://github.com/liusuxian/learning_golang/blob/master/img/Cond.jpg" width = "60%" height = "60%" alt="image-name"/>
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Cond.jpg" width = "60%" height = "60%" alt="image-name"/>

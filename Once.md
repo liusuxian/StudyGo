@@ -158,7 +158,7 @@ func (o *Once) Done() bool {
 }
 ```
 ### Once的知识地图。
-<img src="https://github.com/liusuxian/learning_golang/blob/master/img/Once.jpg" width = "60%" height = "60%" alt="image-name"/>
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Once.jpg" width = "60%" height = "60%" alt="image-name"/>
 
 ### 并发原语的实现，总是有些slowXXXX的方法，从XXXX方法中单独抽取出来，为什么要这么做？有什么好处？
 - 分离固定内容和非固定内容，使得固定的内容能被内联调用，从而优化执行过程。[Go语言inline内联的策略与限制](https://blog.csdn.net/hero_java/article/details/114029057)。

@@ -1,24 +1,24 @@
-# learning_golang
+# StudyGo
 learning golang
 
-[GoReferences](https://github.com/liusuxian/learning_golang/blob/master/GoReferences.md)
+[GoReferences](https://github.com/liusuxian/StudyGo/blob/master/GoReferences.md)
 
-[Mutex笔记](https://github.com/liusuxian/learning_golang/blob/master/Mutex.md)
+[Mutex笔记](https://github.com/liusuxian/StudyGo/blob/master/Mutex.md)
 
-[RWMutex笔记](https://github.com/liusuxian/learning_golang/blob/master/RWMutex.md)
+[RWMutex笔记](https://github.com/liusuxian/StudyGo/blob/master/RWMutex.md)
 
-[WaitGroup笔记](https://github.com/liusuxian/learning_golang/blob/master/WaitGroup.md)
+[WaitGroup笔记](https://github.com/liusuxian/StudyGo/blob/master/WaitGroup.md)
 
-[Cond笔记](https://github.com/liusuxian/learning_golang/blob/master/Cond.md)
+[Cond笔记](https://github.com/liusuxian/StudyGo/blob/master/Cond.md)
 
-[Once笔记](https://github.com/liusuxian/learning_golang/blob/master/Once.md)
+[Once笔记](https://github.com/liusuxian/StudyGo/blob/master/Once.md)
 
-[Map笔记](https://github.com/liusuxian/learning_golang/blob/master/Map.md)
+[Map笔记](https://github.com/liusuxian/StudyGo/blob/master/Map.md)
 
-[Pool笔记](https://github.com/liusuxian/learning_golang/blob/master/Pool.md)
+[Pool笔记](https://github.com/liusuxian/StudyGo/blob/master/Pool.md)
 
-[Context笔记](https://github.com/liusuxian/learning_golang/blob/master/Context.md)
+[Context笔记](https://github.com/liusuxian/StudyGo/blob/master/Context.md)
 
-[Atomic笔记](https://github.com/liusuxian/learning_golang/blob/master/Atomic.md)
+[Atomic笔记](https://github.com/liusuxian/StudyGo/blob/master/Atomic.md)
 
-[Channel笔记](https://github.com/liusuxian/learning_golang/blob/master/Channel.md)
+[Channel笔记](https://github.com/liusuxian/StudyGo/blob/master/Channel.md)
