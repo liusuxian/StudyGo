@@ -9,7 +9,7 @@ import (
     "unsafe"
 )
 
-// 扩展一个RWMutex结构
+// RWMutex 扩展一个RWMutex结构
 type RWMutex struct {
     sync.RWMutex
 }
@@ -21,7 +21,7 @@ func (m *RWMutex) readerCount() int {
     return int(v)
 }
 
-// 尝试获取写锁
+// TryLock 尝试获取写锁
 func (m *RWMutex) TryLock() bool {
     if m.readerCount() < 0 {
         // 已经有写锁了

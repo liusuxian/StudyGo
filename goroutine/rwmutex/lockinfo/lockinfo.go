@@ -10,12 +10,12 @@ import (
 
 const rwmutexMaxReaders = 1 << 30
 
-// 扩展一个RWMutex结构
+// RWMutex 扩展一个RWMutex结构
 type RWMutex struct {
     sync.RWMutex
 }
 
-// 当前reader的数量
+// ReaderCount 当前reader的数量
 func (m *RWMutex) ReaderCount() int {
     v := m.readerCount()
     if v < 0 {
@@ -25,7 +25,7 @@ func (m *RWMutex) ReaderCount() int {
     return v
 }
 
-// 是否有writer
+// IsWriter 是否有writer
 func (m *RWMutex) IsWriter() bool {
     if m.readerCount() < 0 {
         return true
@@ -34,7 +34,7 @@ func (m *RWMutex) IsWriter() bool {
     return false
 }
 
-// writer请求锁时需要等待read完成的reader的数量
+// ReaderWait writer请求锁时需要等待read完成的reader的数量
 func (m *RWMutex) ReaderWait() int {
     // readerWait 这个成员变量前有1个mutex+2个uint32+1个int32
     v := atomic.LoadInt32((*int32)(unsafe.Pointer(uintptr(unsafe.Pointer(&m.RWMutex)) + unsafe.Sizeof(sync.Mutex{}) + 2*unsafe.Sizeof(uint32(0)) + unsafe.Sizeof(int32(0)))))

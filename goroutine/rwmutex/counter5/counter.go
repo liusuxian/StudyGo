@@ -6,20 +6,20 @@ import (
     "time"
 )
 
-// 一个线程安全的计数器
+// Counter 一个线程安全的计数器
 type Counter struct {
     sync.RWMutex
     count uint64
 }
 
-// 使用写锁保护
+// Incr 使用写锁保护
 func (c *Counter) Incr() {
     c.Lock()
     c.count++
     c.Unlock()
 }
 
-// 使用读锁保护
+// Count 使用读锁保护
 func (c *Counter) Count() uint64 {
     c.RLock()
     defer c.RUnlock()

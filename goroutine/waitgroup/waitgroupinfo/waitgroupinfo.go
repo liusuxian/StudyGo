@@ -8,12 +8,12 @@ import (
     "unsafe"
 )
 
-// 扩展一个WaitGroup结构
+// WaitGroup 扩展一个WaitGroup结构
 type WaitGroup struct {
     sync.WaitGroup
 }
 
-// 查询 WaitGroup 的当前的计数值
+// GetCounter 查询 WaitGroup 的当前的计数值
 func (wg *WaitGroup) GetCounter() uint32 {
     pointer := unsafe.Pointer(&wg.WaitGroup)
     if (uintptr(pointer)+unsafe.Sizeof(struct{}{}))%8 == 0 {
@@ -25,7 +25,7 @@ func (wg *WaitGroup) GetCounter() uint32 {
     }
 }
 
-// 查询 WaitGroup 的当前的 waiter 数
+// GetWaiter 查询 WaitGroup 的当前的 waiter 数
 func (wg *WaitGroup) GetWaiter() uint32 {
     pointer := unsafe.Pointer(&wg.WaitGroup)
     if (uintptr(pointer)+unsafe.Sizeof(struct{}{}))%8 == 0 {
