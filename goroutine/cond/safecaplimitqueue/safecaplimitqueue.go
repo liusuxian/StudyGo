@@ -24,7 +24,7 @@ func NewSafeSliceQueue(capacity int) *SafeSliceQueue {
     }
 }
 
-// 入队
+// Enqueue 入队
 func (q *SafeSliceQueue) Enqueue(v interface{}) {
     q.L.Lock()
     defer q.L.Unlock()
@@ -40,7 +40,7 @@ func (q *SafeSliceQueue) Enqueue(v interface{}) {
     q.Broadcast()
 }
 
-// 出队
+// Dequeue 出队
 func (q *SafeSliceQueue) Dequeue() interface{} {
     q.L.Lock()
     defer q.L.Unlock()
