@@ -17,12 +17,12 @@ const (
     mutexWaiterShift = iota      // 标识waiter的起始bit位置
 )
 
-// 扩展一个Mutex结构
+// Mutex 扩展一个Mutex结构
 type Mutex struct {
     sync.Mutex
 }
 
-// 尝试获取锁
+// TryLock 尝试获取锁
 func (m *Mutex) TryLock() bool {
     // 如果能成功抢到锁
     if atomic.CompareAndSwapInt32((*int32)(unsafe.Pointer(&m.Mutex)), 0, mutexLocked) {

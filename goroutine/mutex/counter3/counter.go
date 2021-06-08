@@ -5,7 +5,7 @@ import (
     "sync"
 )
 
-// 线程安全的计数器类型
+// Counter 线程安全的计数器类型
 type Counter struct {
     CounterType int
     Name        string
@@ -14,14 +14,14 @@ type Counter struct {
     count uint64
 }
 
-// 加1的方法，内部使用互斥锁保护
+// Incr 加1的方法，内部使用互斥锁保护
 func (c *Counter) Incr() {
     c.Lock()
     c.count++
     c.Unlock()
 }
 
-// 得到计数器的值，也需要锁保护
+// Count 得到计数器的值，也需要锁保护
 func (c *Counter) Count() uint64 {
     c.Lock()
     defer c.Unlock()

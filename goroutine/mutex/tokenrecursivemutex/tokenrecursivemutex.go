@@ -6,14 +6,14 @@ import (
     "sync/atomic"
 )
 
-// Token方式的递归锁
+// TokenRecursiveMutex Token方式的递归锁
 type TokenRecursiveMutex struct {
     mu        sync.Mutex
     token     int64 // 当前持有锁的这个goroutine的token
     recursion int32 // 这个goroutine 重入的次数
 }
 
-// 请求锁，需要传入token
+// Lock 请求锁，需要传入token
 func (m *TokenRecursiveMutex) Lock(token int64) {
     // 如果传入的token和持有锁的token一致，说明是递归调用
     if atomic.LoadInt64(&m.token) == token {
@@ -27,7 +27,7 @@ func (m *TokenRecursiveMutex) Lock(token int64) {
     m.recursion = 1
 }
 
-// 释放锁
+// Unlock 释放锁
 func (m *TokenRecursiveMutex) Unlock(token int64) {
     // 释放其它token持有的锁
     if atomic.LoadInt64(&m.token) != token {

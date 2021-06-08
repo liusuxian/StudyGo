@@ -16,12 +16,12 @@ const (
     mutexWaiterShift = iota      // 标识waiter的起始bit位置
 )
 
-// 扩展一个Mutex结构
+// Mutex 扩展一个Mutex结构
 type Mutex struct {
     sync.Mutex
 }
 
-// 当前等待者的数量
+// Count 当前等待者的数量
 func (m *Mutex) Count() int {
     // 获取state字段的值
     v := atomic.LoadInt32((*int32)(unsafe.Pointer(&m.Mutex)))
@@ -30,19 +30,19 @@ func (m *Mutex) Count() int {
     return int(v)
 }
 
-// 锁是否被持有
+// IsLocked 锁是否被持有
 func (m *Mutex) IsLocked() bool {
     state := atomic.LoadInt32((*int32)(unsafe.Pointer(&m.Mutex)))
     return state&mutexLocked == mutexLocked
 }
 
-// 是否有等待者被唤醒
+// IsWoken 是否有等待者被唤醒
 func (m *Mutex) IsWoken() bool {
     state := atomic.LoadInt32((*int32)(unsafe.Pointer(&m.Mutex)))
     return state&mutexWoken == mutexWoken
 }
 
-// 锁是否处于饥饿状态
+// IsStarving 锁是否处于饥饿状态
 func (m *Mutex) IsStarving() bool {
     state := atomic.LoadInt32((*int32)(unsafe.Pointer(&m.Mutex)))
     return state&mutexStarving == mutexStarving

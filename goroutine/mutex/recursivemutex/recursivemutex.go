@@ -10,7 +10,7 @@ import (
     "sync/atomic"
 )
 
-// 获取 goroutine id
+// GoID 获取 goroutine id
 func GoID() int64 {
     var buf [64]byte
     n := runtime.Stack(buf[:], false)
@@ -30,7 +30,7 @@ type RecursiveMutex struct {
     recursion int32 // 这个goroutine 重入的次数
 }
 
-// Lock
+// Lock 加锁
 func (m *RecursiveMutex) Lock() {
     gid := goid.Get()
     // 如果当前持有锁的goroutine就是这次调用的goroutine,说明是重入
@@ -44,7 +44,7 @@ func (m *RecursiveMutex) Lock() {
     m.recursion = 1
 }
 
-// Unlock
+// Unlock 释放锁
 func (m *RecursiveMutex) Unlock() {
     gid := goid.Get()
     // 非持有锁的goroutine尝试释放锁，错误的使用

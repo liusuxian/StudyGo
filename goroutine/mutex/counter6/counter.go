@@ -6,20 +6,20 @@ import (
     "time"
 )
 
-// 线程安全的计数器
+// Counter 线程安全的计数器
 type Counter struct {
     sync.Mutex
     count uint64
 }
 
-// 对计数值加一
+// Incr 对计数值加一
 func (c *Counter) Incr() {
     c.Lock()
     c.count++
     c.Unlock()
 }
 
-// 获取当前的计数值
+// Count 获取当前的计数值
 func (c *Counter) Count() uint64 {
     c.Lock()
     defer c.Unlock()
