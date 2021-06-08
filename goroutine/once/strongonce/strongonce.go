@@ -6,13 +6,13 @@ import (
     "sync/atomic"
 )
 
-// 一个功能更加强大的Once
+// Once 一个功能更加强大的Once
 type Once struct {
     sync.Mutex
     done uint32
 }
 
-// 传入的函数f有返回值error，如果初始化失败，需要返回失败的error
+// Do 传入的函数f有返回值error，如果初始化失败，需要返回失败的error
 // Do方法会把这个error返回给调用者
 func (o *Once) Do(f func() error) error {
     // fast path
