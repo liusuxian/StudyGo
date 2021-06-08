@@ -7,7 +7,7 @@ import (
     "unsafe"
 )
 
-// lock-free的queue
+// LKQueue lock-free的queue
 type LKQueue struct {
     head unsafe.Pointer
     tail unsafe.Pointer
@@ -24,7 +24,7 @@ func NewLKQueue() *LKQueue {
     return &LKQueue{head: n, tail: n}
 }
 
-// 入队
+// Enqueue 入队
 func (q *LKQueue) Enqueue(v interface{}) {
     n := &node{value: v}
     for {
@@ -43,7 +43,7 @@ func (q *LKQueue) Enqueue(v interface{}) {
     }
 }
 
-// 出队，没有元素则返回nil
+// Dequeue 出队，没有元素则返回nil
 func (q *LKQueue) Dequeue() interface{} {
     for {
         head := load(&q.head)
