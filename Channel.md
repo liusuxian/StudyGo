@@ -101,3 +101,8 @@ for range ch {
 - 需要和超时配合时，使用Channel和Context。
 ### Channel不同状态下各种操作的结果。
 <img src="https://github.com/liusuxian/StudyGo/blob/master/img/Channel1.jpg" width = "60%" height = "60%" alt="image-name"/>
+
+### 使用反射操作Channel。
+- 通过反射的方式执行select语句，在处理很多的case clause，尤其是不定长的case clause的时候，非常有用。任务编排的实现，也可以用这种方法。
+### 典型的应用场景。
+- 消息交流。从chan的内部实现看，它是以一个循环队列的方式存放数据，所以它有时候也会被当成线程安全的队列和buffer使用。一个goroutine可以安全地往Channel中塞数据，另外一个goroutine可以安全地从Channel中读取数据，goroutine就可以安全地实现信息交流了。比如worker池的例子，Marcio Castilho [使用Go每分钟处理百万请求](http://marcio.io/2015/07/handling-1-million-requests-per-minute-with-golang/) 这篇文章中，就介绍了他们应对大并发请求的设计。
