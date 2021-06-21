@@ -99,3 +99,5 @@ for range ch {
 - 简单等待所有任务的完成用WaitGroup，也有Channel的推崇者用Channel，都可以。
 - 需要和Select语句结合，使用Channel。 
 - 需要和超时配合时，使用Channel和Context。
+### Channel不同状态下各种操作的结果。
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Channel1.jpg" width = "60%" height = "60%" alt="image-name"/>
