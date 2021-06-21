@@ -84,24 +84,24 @@ for range ch {
 - Go在编译的时候，会根据容量的大小选择调用makechan64还是makechan。makechan64只是做了size检查，底层还是调用makechan实现的。makechan的目标就是生成hchan对象。
 ### send。
 - Go在编译发送数据给chan的时候，会把send语句转换成chansend1函数，chansend1函数会调用chansend。
-  - 1. 如果chan是nil的话，就把调用者永远阻塞。
-  - 2. 如果往一个已经满了的chan实例发送数据时，并且想不阻塞当前调用，那么直接返回。chansend1方法在调用chansend的时候设置了阻塞参数。
-  - 3. 如果chan已经被close了，再往里面发送数据的话会panic。
-  - 4. 如果等待队列中有等待的receiver，那么就把它从队列中弹出，然后直接把数据交给它，而不需要放入到buf中，速度可以更快一些。
-  - 5. 如果当前没有receiver，需要把数据放入到buf中，放入之后就成功返回了。
-  - 6. 如果buf满了，发送者的goroutine就会加入到发送者的等待队列中，直到被唤醒。这个时候数据或者被取走了，或者chan被close了。
+  - 如果chan是nil的话，就把调用者永远阻塞。
+  - 如果往一个已经满了的chan实例发送数据时，并且想不阻塞当前调用，那么直接返回。chansend1方法在调用chansend的时候设置了阻塞参数。
+  - 如果chan已经被close了，再往里面发送数据的话会panic。
+  - 如果等待队列中有等待的receiver，那么就把它从队列中弹出，然后直接把数据交给它，而不需要放入到buf中，速度可以更快一些。
+  - 如果当前没有receiver，需要把数据放入到buf中，放入之后就成功返回了。
+  - 如果buf满了，发送者的goroutine就会加入到发送者的等待队列中，直到被唤醒。这个时候数据或者被取走了，或者chan被close了。
 ### recv。
 - 在处理从chan中接收数据时，Go会把代码转换成chanrecv1函数，如果要返回两个返回值，会转换成chanrecv2，chanrecv1函数和chanrecv2会调用chanrecv。chanrecv1和chanrecv2传入的block参数的值是true，都是阻塞方式。
-  - 1. chan为nil的情况和send一样，从nil chan中接收（读取、获取）数据时，调用者会被永远阻塞。
-  - 2. 如果chan已经被close了，并且队列中没有缓存的元素，那么将得到零值。
-  - 3. 如果buf满了。这个时候如果是unbuffer的chan，就直接将sender的数据复制给receiver，否则就从队列头部读取一个值，并把这个sender的值加入到队列尾部。
-  - 4. 如果没有等待的sender的情况，这个是和chansend共用一把大锁，所以不会有并发的问题，如果buf有元素，就取出一个元素给receiver。
-  - 5. 如果buf中没有元素，那么当前的receiver就会被阻塞，直到它从sender中接收了数据，或者是chan被close才返回。
+  - chan为nil的情况和send一样，从nil chan中接收（读取、获取）数据时，调用者会被永远阻塞。
+  - 如果chan已经被close了，并且队列中没有缓存的元素，那么将得到零值。
+  - 如果buf满了。这个时候如果是unbuffer的chan，就直接将sender的数据复制给receiver，否则就从队列头部读取一个值，并把这个sender的值加入到队列尾部。
+  - 如果没有等待的sender的情况，这个是和chansend共用一把大锁，所以不会有并发的问题，如果buf有元素，就取出一个元素给receiver。
+  - 如果buf中没有元素，那么当前的receiver就会被阻塞，直到它从sender中接收了数据，或者是chan被close才返回。
 ### close。
 - 通过close函数，可以把chan关闭，编译器会替换成closechan方法的调用。
-  - 1. 如果chan为nil，close会panic；
-  - 2. 如果chan已经closed，再次close也会panic。
-  - 3. 如果chan不为nil，chan也没有closed，就把等待队列中的sender（writer）和 receiver（reader）从队列中全部移除并唤醒。
+  - 如果chan为nil，close会panic；
+  - 如果chan已经closed，再次close也会panic。
+  - 如果chan不为nil，chan也没有closed，就把等待队列中的sender（writer）和 receiver（reader）从队列中全部移除并唤醒。
 ### 使用Channel最常见的错误是panic和goroutine泄漏。
 - close为nil的chan，会panic。
 - close已经close的chan，会panic。
@@ -124,7 +124,7 @@ for range ch {
 - 信号通知。chan类型有这样一个特点：chan如果为空，那么receiver接收数据的时候就会阻塞等待，直到chan被关闭或者有新的数据到来。利用这个机制，我们可以实现wait/notify的设计模式。传统的并发原语Cond也能实现这个功能。但是Cond使用起来比较复杂，容易出错，而使用chan实现wait/notify模式，就方便多了。除了正常的业务处理时的wait/notify，我们经常碰到的一个场景，就是程序关闭的时候，我们需要在退出之前做一些清理的动作。这个时候，我们经常要使用chan。比如使用chan实现程序的graceful shutdown，在退出之前执行一些连接关闭、文件close、缓存落盘等一些动作。有时候清理可能是一个很耗时的操作，比如十几分钟才能完成，如果程序退出需要等待这么长时间，用户是不能接受的，所以在实践中，我们需要设置一个最长的等待时间。只要超过了这个时间，程序就不再等待，可以直接退出。所以退出的时候分为两个阶段：closing代表程序退出，但是清理工作还没做；closed代表清理工作已经做完。
 - 锁。在chan的内部实现中，就有一把互斥锁保护着它的所有字段。从外在表现上，chan的发送和接收之间也存在着happens-before的关系，保证元素放进去之后，receiver才能读取到（关于happends-before的关系，是指事件发生的先后顺序关系）。要想使用chan实现互斥锁，至少有两种方式。一种方式是先初始化一个capacity等于1的Channel，然后再放入一个元素。这个元素就代表锁，谁取得了这个元素，就相当于获取了这把锁。另一种方式是，先初始化一个capacity等于1的Channel，它的“空槽”代表锁，谁能成功地把元素发送到这个Channel谁就获取了这把锁。
 - 任务编排。 
-  - 1. Or-Done模式，Or-Done模式是信号通知模式中更宽泛的一种模式。这里提到了“信号通知模式”。我们会使用“信号通知”实现某个任务执行完成后的通知机制，在实现时，我们为这个任务定义一个类型为chan struct{}类型的done变量，等任务结束后，我们就可以close这个变量，然后其它receiver就会收到这个通知。这是有一个任务的情况，如果有多个任务，只要有任意一个任务执行完，我们就想获得这个信号，这就是Or-Done模式。比如你发送同一个请求到多个微服务节点，只要任意一个微服务节点返回结果，就算成功。可以使用递归、反射，或者是用最笨的每个goroutine处理一个Channel的方式来实现。
-  - 2. 扇入模式。在软件工程中，模块的扇入是指有多少个上级模块调用它。而对于我们这里的Channel扇入模式来说，就是指有多个源Channel输入、一个目的Channel输出的情况。扇入比就是源Channel数量比1。每个源Channel的元素都会发送给目标Channel，相当于目标Channel的receiver只需要监听目标Channel，就可以接收所有发送给源Channel的数据。扇入模式也可以使用反射、递归，或者是用最笨的每个goroutine处理一个Channel的方式来实现。
-  - 3. 扇出模式。扇出模式只有一个输入源Channel，有多个目标Channel，扇出比就是1比目标Channel数的值，经常用在设计模式中的观察者模式中（观察者设计模式定义了对象间的一种一对多的组合关系。这样一来一个对象的状态发生变化时，所有依赖于它的对象都会得到通知并自动刷新）。在观察者模式中，数据变动后，多个观察者都会收到这个变更信号。从源Channel取出一个数据后，依次发送给目标Channel。在发送给目标Channel的时候，可以同步发送，也可以异步发送。
-  - 4. Stream。一种把Channel当作流式管道使用的方式，也就是把Channel看作流（Stream），提供跳过几个元素，或者是只取其中的几个元素等方法。首先我们提供创建流的方法。这个方法把一个数据slice转换成流。流创建好以后，该咋处理呢？下面实现流的方法：takeN只取流中的前n个数据；takeFn筛选流中的数据，只保留满足条件的数据；takeWhile只取前面满足条件的数据，一旦不满足条件，就不再取；skipN跳过流中前几个数据；skipFn跳过满足条件的数据；skipWhile跳过前面满足条件的数据，一旦不满足条件，当前这个元素和以后的元素都会输出给Channel的receiver。
+  - Or-Done模式，Or-Done模式是信号通知模式中更宽泛的一种模式。这里提到了“信号通知模式”。我们会使用“信号通知”实现某个任务执行完成后的通知机制，在实现时，我们为这个任务定义一个类型为chan struct{}类型的done变量，等任务结束后，我们就可以close这个变量，然后其它receiver就会收到这个通知。这是有一个任务的情况，如果有多个任务，只要有任意一个任务执行完，我们就想获得这个信号，这就是Or-Done模式。比如你发送同一个请求到多个微服务节点，只要任意一个微服务节点返回结果，就算成功。可以使用递归、反射，或者是用最笨的每个goroutine处理一个Channel的方式来实现。
+  - 扇入模式。在软件工程中，模块的扇入是指有多少个上级模块调用它。而对于我们这里的Channel扇入模式来说，就是指有多个源Channel输入、一个目的Channel输出的情况。扇入比就是源Channel数量比1。每个源Channel的元素都会发送给目标Channel，相当于目标Channel的receiver只需要监听目标Channel，就可以接收所有发送给源Channel的数据。扇入模式也可以使用反射、递归，或者是用最笨的每个goroutine处理一个Channel的方式来实现。
+  - 扇出模式。扇出模式只有一个输入源Channel，有多个目标Channel，扇出比就是1比目标Channel数的值，经常用在设计模式中的观察者模式中（观察者设计模式定义了对象间的一种一对多的组合关系。这样一来一个对象的状态发生变化时，所有依赖于它的对象都会得到通知并自动刷新）。在观察者模式中，数据变动后，多个观察者都会收到这个变更信号。从源Channel取出一个数据后，依次发送给目标Channel。在发送给目标Channel的时候，可以同步发送，也可以异步发送。
+  - Stream。一种把Channel当作流式管道使用的方式，也就是把Channel看作流（Stream），提供跳过几个元素，或者是只取其中的几个元素等方法。首先我们提供创建流的方法。这个方法把一个数据slice转换成流。流创建好以后，该咋处理呢？下面实现流的方法：takeN只取流中的前n个数据；takeFn筛选流中的数据，只保留满足条件的数据；takeWhile只取前面满足条件的数据，一旦不满足条件，就不再取；skipN跳过流中前几个数据；skipFn跳过满足条件的数据；skipWhile跳过前面满足条件的数据，一旦不满足条件，当前这个元素和以后的元素都会输出给Channel的receiver。
