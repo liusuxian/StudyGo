@@ -128,3 +128,6 @@ for range ch {
   - 扇入模式。在软件工程中，模块的扇入是指有多少个上级模块调用它。而对于我们这里的Channel扇入模式来说，就是指有多个源Channel输入、一个目的Channel输出的情况。扇入比就是源Channel数量比1。每个源Channel的元素都会发送给目标Channel，相当于目标Channel的receiver只需要监听目标Channel，就可以接收所有发送给源Channel的数据。扇入模式也可以使用反射、递归，或者是用最笨的每个goroutine处理一个Channel的方式来实现。
   - 扇出模式。扇出模式只有一个输入源Channel，有多个目标Channel，扇出比就是1比目标Channel数的值，经常用在设计模式中的观察者模式中（观察者设计模式定义了对象间的一种一对多的组合关系。这样一来一个对象的状态发生变化时，所有依赖于它的对象都会得到通知并自动刷新）。在观察者模式中，数据变动后，多个观察者都会收到这个变更信号。从源Channel取出一个数据后，依次发送给目标Channel。在发送给目标Channel的时候，可以同步发送，也可以异步发送。
   - Stream。一种把Channel当作流式管道使用的方式，也就是把Channel看作流（Stream），提供跳过几个元素，或者是只取其中的几个元素等方法。首先我们提供创建流的方法。这个方法把一个数据slice转换成流。流创建好以后，该咋处理呢？下面实现流的方法：takeN只取流中的前n个数据；takeFn筛选流中的数据，只保留满足条件的数据；takeWhile只取前面满足条件的数据，一旦不满足条件，就不再取；skipN跳过流中前几个数据；skipFn跳过满足条件的数据；skipWhile跳过前面满足条件的数据，一旦不满足条件，当前这个元素和以后的元素都会输出给Channel的receiver。
+  - map-reduce。map-reduce是一种处理数据的方式，最早是由Google公司研究提出的一种面向大规模数据处理的并行计算模型和方法，开源的版本是hadoop，前几年比较火。map-reduce分为两个步骤，第一步是映射（map），处理队列中的数据，第二步是规约（reduce），把列表中的每一个元素按照一定的处理方式处理成结果，放入到结果队列中。就像做汉堡一样，map就是单独处理每一种食材，reduce就是从每一份食材中取一部分，做成一个汉堡。
+### Channel的知识地图。
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Channel2.jpg" width = "60%" height = "60%" alt="image-name"/>
