@@ -88,3 +88,7 @@ for range ch {
 - 在处理从chan中接收数据时，Go会把代码转换成chanrecv1函数，如果要返回两个返回值，会转换成chanrecv2，chanrecv1函数和chanrecv2会调用chanrecv。chanrecv1和chanrecv2传入的block参数的值是true，都是阻塞方式。1、chan为nil的情况和send一样，从nil chan中接收（读取、获取）数据时，调用者会被永远阻塞。2、如果chan已经被close了，并且队列中没有缓存的元素，那么将得到零值。3、如果buf满了。这个时候如果是unbuffer的chan，就直接将sender的数据复制给receiver，否则就从队列头部读取一个值，并把这个sender的值加入到队列尾部。4、如果没有等待的sender的情况，这个是和chansend共用一把大锁，所以不会有并发的问题，如果buf有元素，就取出一个元素给receiver。5、如果buf中没有元素，那么当前的receiver就会被阻塞，直到它从sender中接收了数据，或者是chan被close才返回。
 ### close。
 - 通过close函数，可以把chan关闭，编译器会替换成closechan方法的调用。1、如果chan为nil，close会panic；2、如果chan已经closed，再次close也会panic。3、如果chan不为nil，chan也没有closed，就把等待队列中的sender（writer）和 receiver（reader）从队列中全部移除并唤醒。
+### 使用Channel最常见的错误是panic和goroutine泄漏。
+- close为nil的chan
+- send已经close的chan
+- close已经close的chan
