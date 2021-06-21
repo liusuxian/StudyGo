@@ -89,6 +89,13 @@ for range ch {
 ### close。
 - 通过close函数，可以把chan关闭，编译器会替换成closechan方法的调用。1、如果chan为nil，close会panic；2、如果chan已经closed，再次close也会panic。3、如果chan不为nil，chan也没有closed，就把等待队列中的sender（writer）和 receiver（reader）从队列中全部移除并唤醒。
 ### 使用Channel最常见的错误是panic和goroutine泄漏。
-- close为nil的chan
-- send已经close的chan
-- close已经close的chan
+- close为nil的chan，会panic。
+- close已经close的chan，会panic。
+- send已经close的chan，会panic。
+### 选择Channel还是选择并发原语的方法。
+- 共享资源的并发访问使用传统并发原语。
+- 复杂的任务编排和消息传递使用Channel。
+- 消息通知机制使用Channel，除非只想signal一个goroutine才使用Cond。
+- 简单等待所有任务的完成用WaitGroup，也有Channel的推崇者用Channel，都可以。
+- 需要和Select语句结合，使用Channel。 
+- 需要和超时配合时，使用Channel和Context。
