@@ -131,3 +131,6 @@ for range ch {
   - map-reduce。map-reduce是一种处理数据的方式，最早是由Google公司研究提出的一种面向大规模数据处理的并行计算模型和方法，开源的版本是hadoop，前几年比较火。map-reduce分为两个步骤，第一步是映射（map），处理队列中的数据，第二步是规约（reduce），把列表中的每一个元素按照一定的处理方式处理成结果，放入到结果队列中。就像做汉堡一样，map就是单独处理每一种食材，reduce就是从每一份食材中取一部分，做成一个汉堡。
 ### Channel的知识地图。
 <img src="https://github.com/liusuxian/StudyGo/blob/master/img/Channel2.jpg" width = "60%" height = "60%" alt="image-name"/>
+
+### 内存模型的知识地图。
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Channel3.jpg" width = "60%" height = "60%" alt="image-name"/>
