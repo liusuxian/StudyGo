@@ -22,3 +22,7 @@ StudyGo
 [Atomic笔记](https://github.com/liusuxian/StudyGo/blob/master/Atomic.md)
 
 [Channel笔记](https://github.com/liusuxian/StudyGo/blob/master/Channel.md)
+
+[Semaphore笔记](https://github.com/liusuxian/StudyGo/blob/master/Semaphore.md)
+
+[SingleFlightAndCyclicBarrier笔记](https://github.com/liusuxian/StudyGo/blob/master/SingleFlightAndCyclicBarrier.md)
