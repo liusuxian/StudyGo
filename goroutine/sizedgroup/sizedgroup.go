@@ -11,8 +11,8 @@ import (
 
 func main() {
     // 设置goroutine数是10
-    swg := syncs.NewSizedGroup(10)
-    // swg := syncs.NewSizedGroup(10, syncs.Preemptive)
+    // swg := syncs.NewSizedGroup(10)
+    swg := syncs.NewSizedGroup(10, syncs.Preemptive)
     var c uint32
 
     // 执行1000个子任务，只会有10个goroutine去执行
