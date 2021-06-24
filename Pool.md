@@ -99,4 +99,4 @@ type channelPool struct {
 - [dpaks/goworkers](https://pkg.go.dev/github.com/dpaks/goworkers?utm_source=godoc) 提供了更便利的Submit方法提交任务以及Worker数、任务数等查询方法、关闭Pool的方法。它的任务的执行结果需要在ResultChan和ErrChan中去获取，没有提供阻塞的方法，但是它可以在初始化的时候设置Worker的数量和任务数。
 - 类似的Worker Pool的实现非常多，比如还有 [panjf2000/ants](https://github.com/panjf2000/ants)、[Jeffail/tunny](https://github.com/Jeffail/tunny)、[benmanns/goworker](https://github.com/benmanns/goworker)、[go-playground/pool](https://github.com/go-playground/pool)、[Sherifabdlnaby/gpool](https://github.com/Sherifabdlnaby/gpool) 等第三方库。[pond](https://github.com/alitto/pond) 也是一个非常不错的Worker Pool，关注度目前不是很高，但是功能非常齐全。
 ### Pool知识地图。
-<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Pool.jpg" width = "60%" height = "60%" alt="image-name"/>
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Pool.jpg" width = "100%" height = "100%" alt="image-name"/>

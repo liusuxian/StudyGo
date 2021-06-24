@@ -70,7 +70,7 @@ for range ch {
 ```
 ### chan数据结构。
 - chan类型的数据结构如下图所示，它的数据类型是[runtime.hchan](https://github.com/golang/go/blob/master/src/runtime/chan.go#L32)。
-<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Channel.jpg" width = "60%" height = "60%" alt="image-name"/>
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Channel.jpg" width = "100%" height = "100%" alt="image-name"/>
 
 - qcount：代表chan中已经接收但还没被取走的元素的个数。内建函数len可以返回这个字段的值。
 - dataqsiz：队列的大小。chan使用一个循环队列来存放元素，循环队列很适合这种生产者-消费者的场景。
@@ -114,7 +114,7 @@ for range ch {
 - 需要和Select语句结合，使用Channel。 
 - 需要和超时配合时，使用Channel和Context。
 ### Channel不同状态下各种操作的结果。
-<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Channel1.jpg" width = "60%" height = "60%" alt="image-name"/>
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Channel1.jpg" width = "100%" height = "100%" alt="image-name"/>
 
 ### 使用反射操作Channel。
 - 通过反射的方式执行select语句，在处理很多的case clause，尤其是不定长的case clause的时候，非常有用。任务编排的实现，也可以用这种方法。
@@ -130,7 +130,7 @@ for range ch {
   - Stream。一种把Channel当作流式管道使用的方式，也就是把Channel看作流（Stream），提供跳过几个元素，或者是只取其中的几个元素等方法。首先我们提供创建流的方法。这个方法把一个数据slice转换成流。流创建好以后，该咋处理呢？下面实现流的方法：takeN只取流中的前n个数据；takeFn筛选流中的数据，只保留满足条件的数据；takeWhile只取前面满足条件的数据，一旦不满足条件，就不再取；skipN跳过流中前几个数据；skipFn跳过满足条件的数据；skipWhile跳过前面满足条件的数据，一旦不满足条件，当前这个元素和以后的元素都会输出给Channel的receiver。
   - map-reduce。map-reduce是一种处理数据的方式，最早是由Google公司研究提出的一种面向大规模数据处理的并行计算模型和方法，开源的版本是hadoop，前几年比较火。map-reduce分为两个步骤，第一步是映射（map），处理队列中的数据，第二步是规约（reduce），把列表中的每一个元素按照一定的处理方式处理成结果，放入到结果队列中。就像做汉堡一样，map就是单独处理每一种食材，reduce就是从每一份食材中取一部分，做成一个汉堡。
 ### Channel的知识地图。
-<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Channel2.jpg" width = "60%" height = "60%" alt="image-name"/>
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Channel2.jpg" width = "100%" height = "100%" alt="image-name"/>
 
 ### 内存模型的知识地图。
-<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Channel3.jpg" width = "60%" height = "60%" alt="image-name"/>
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Channel3.jpg" width = "100%" height = "100%" alt="image-name"/>
