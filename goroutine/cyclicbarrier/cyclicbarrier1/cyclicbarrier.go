@@ -52,7 +52,7 @@ func main() {
         ch <- "O"
     }
 
-    // 300个原子，300个goroutine,每个goroutine并发的产生一个原子
+    // 300个原子，300个goroutine，每个goroutine并发的产生一个原子
     var N = 100
     ch = make(chan string, N*3)
     h2o := New()
