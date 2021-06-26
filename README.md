@@ -28,3 +28,5 @@ StudyGo
 [SingleFlightAndCyclicBarrier笔记](https://github.com/liusuxian/StudyGo/blob/master/SingleFlightAndCyclicBarrier.md)
 
 [Groups笔记](https://github.com/liusuxian/StudyGo/blob/master/Groups.md)
+
+[Etcd笔记](https://github.com/liusuxian/StudyGo/blob/master/Etcd.md)
