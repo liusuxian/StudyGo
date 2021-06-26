@@ -31,7 +31,6 @@ func main() {
     time.Sleep(time.Second)
     resp <- atomic.LoadInt64(&requestCount)
     wg.Wait()
-
 }
 
 func Request() (interface{}, error) {
