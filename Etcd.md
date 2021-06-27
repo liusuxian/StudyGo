@@ -99,4 +99,24 @@ func (b *DoubleBarrier) Leave() error
 - 当调用者调用Enter时，会被阻塞住，直到一共有count（初始化这个栅栏的时候设定的值）个节点调用了Enter，这count个被阻塞的节点才能继续执行。所以你可以利用它编排一组节点，让这些节点在同一个时刻开始执行任务。
 - 同理，如果你想让一组节点在同一个时刻完成任务，就可以调用Leave方法。节点调用Leave方法的时候，会被阻塞，直到有count个节点，都调用了Leave方法，这些节点才能继续执行。
 ### STM
-- 
+- etcd提供了在一个事务中对多个key的更新功能，这一组key的操作要么全部成功，要么全部失败。etcd的事务实现方式是基于CAS方式实现的，融合了Get、Put和Delete操作。
+- etcd的事务操作如下，分为条件块、成功块和失败块，条件块用来检测事务是否成功，如果成功，就执行Then(...)，如果失败，就执行Else(...)：
+``` go
+Txn().If(cond1, cond2, ...).Then(op1, op2, ...,).Else(op1’, op2’, …)
+```
+- 要使用STM，你需要先编写一个apply函数，这个函数的执行是在一个事务之中的：
+``` go
+apply func(STM) error
+```
+- 这个方法包含一个STM类型的参数，它提供了对key值的读写操作。STM提供了4个方法，分别是Get、Put、Receive和Delete，代码如下：
+``` go
+type STM interface {
+  Get(key ...string) string
+  Put(key, val string, opts ...v3.OpOption)
+  Rev(key string) int64
+  Del(key string)
+}
+```
+- 使用etcd STM的时候，我们只需要定义一个apply方法，比如说转账方法exchange，然后通过concurrency.NewSTM(cli, exchange)，就可以完成转账事务的执行了。
+### 分布式并发原语的知识地图。
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Etcd1.jpg" width = "100%" height = "100%" alt="image-name"/>
