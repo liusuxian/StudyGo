@@ -21,3 +21,20 @@ func (e *Election) Proclaim(ctx context.Context, val string) error
 ``` go
 func (e *Election) Resign(ctx context.Context) (err error)
 ```
+### 查询
+- etcd提供了查询当前Leader的方法Leader，如果当前还没有Leader，就返回一个错误，你可以使用这个方法来查询主节点信息。这个方法的签名如下：
+``` go
+func (e *Election) Leader(ctx context.Context) (*v3.GetResponse, error)
+```
+- 每次主节点的变动都会生成一个新的版本号，你还可以查询版本号信息（Rev方法），了解主节点变动情况：
+``` go
+func (e *Election) Rev() int64
+```
+### 监控
+- 我们可以通过Observe来监控主的变化，它的签名如下：
+``` go
+func (e *Election) Observe(ctx context.Context) <-chan v3.GetResponse
+```
+- 它会返回一个chan，显示主节点的变动信息。需要注意的是，它不会返回主节点的全部历史变动信息，而是只返回最近的一条变动信息以及之后的变动信息。
+### 互斥锁
+- 互斥锁的应用场景和主从架构的应用场景不太一样。使用互斥锁的不同节点是没有主从这样的角色的，所有的节点都是一样的，只不过在同一时刻，只允许其中的一个节点持有锁。
