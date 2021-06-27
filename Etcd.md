@@ -38,3 +38,16 @@ func (e *Election) Observe(ctx context.Context) <-chan v3.GetResponse
 - 它会返回一个chan，显示主节点的变动信息。需要注意的是，它不会返回主节点的全部历史变动信息，而是只返回最近的一条变动信息以及之后的变动信息。
 ### 互斥锁
 - 互斥锁的应用场景和主从架构的应用场景不太一样。使用互斥锁的不同节点是没有主从这样的角色的，所有的节点都是一样的，只不过在同一时刻，只允许其中的一个节点持有锁。
+### Locker
+- etcd提供了一个简单的Locker原语，它类似于Go标准库中的sync.Locker接口，也提供了Lock/UnLock的机制：
+``` go
+func NewLocker(s *Session, pfx string) sync.Locker
+```
+- 获得锁是有先后顺序的，一个节点释放了锁之后，另外一个节点才能获取到这个分布式锁。
+### Mutex
+- Locker是基于Mutex实现的，只不过Mutex提供了查询Mutex的key的信息的功能。
+- Mutex并没有实现sync.Locker接口，它的Lock/Unlock方法需要提供一个context.Context实例做参数，这也就意味着，在请求锁的时候，你可以设置超时时间，或者主动取消请求。
+### 读写锁
+- etcd提供的分布式读写锁的功能和标准库的读写锁的功能是一样的。只不过etcd提供的读写锁，可以在分布式环境中的不同的节点使用。它提供的方法也和标准库中的读写锁的方法一致，分别提供了RLock/RUnlock、Lock/Unlock方法。
+### 内存模型的知识地图。
+<img src="https://github.com/liusuxian/StudyGo/blob/master/img/Etcd.jpg" width = "100%" height = "100%" alt="image-name"/>
