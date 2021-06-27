@@ -70,3 +70,33 @@ func (q *Queue) Dequeue() (string, error)
 - etcd的分布式队列是一种多读多写的队列，所以你也可以启动多个写节点和多个读节点。
 - etcd还提供了优先级队列（PriorityQueue）。它的用法和队列类似，也提供了出队和入队的操作，只不过在入队的时候，除了需要把一个值加入到队列，我们还需要提供uint16类型的一个整数，作为此值的优先级，优先级高的元素会优先出队。
 ### 分布式栅栏
+- Barrier：分布式栅栏。如果持有Barrier的节点释放了它，所有等待这个Barrier的节点就不会被阻塞，而是会继续执行。
+- DoubleBarrier：计数型栅栏。在初始化计数型栅栏的时候，我们就必须提供参与节点的数量，当这些数量的节点都Enter或者Leave的时候，这个栅栏就会放开。所以我们把它称为计数型栅栏。
+### Barrier：分布式栅栏
+- 分布式Barrier的创建很简单，你只需要提供etcd的Client和Barrier的名字就可以了，如下所示：
+``` go
+func NewBarrier(client *v3.Client, key string) *Barrier
+```
+- Barrier提供了三个方法，分别是Hold、Release和Wait，代码如下：
+``` go
+func (b *Barrier) Hold() error
+func (b *Barrier) Release() error
+func (b *Barrier) Wait() error
+```
+- Hold方法是创建一个Barrier。如果Barrier已经创建好了，有节点调用它的Wait方法，就会被阻塞。
+- Release方法是释放这个Barrier，也就是打开栅栏。如果使用了这个方法，所有被阻塞的节点都会被放行，继续执行。
+- Wait方法会阻塞当前的调用者，直到这个Barrier被release。如果这个栅栏不存在，调用者不会被阻塞，而是会继续执行。 
+### DoubleBarrier：计数型栅栏
+- etcd还提供了另外一种栅栏，叫做DoubleBarrier，这也是一种非常有用的栅栏。这个栅栏初始化的时候需要提供一个计数count，如下所示：
+``` go
+func NewDoubleBarrier(s *concurrency.Session, key string, count int) *DoubleBarrier
+```
+- 同时，它还提供了两个方法，分别是Enter和Leave，代码如下：
+``` go
+func (b *DoubleBarrier) Enter() error
+func (b *DoubleBarrier) Leave() error
+```
+- 当调用者调用Enter时，会被阻塞住，直到一共有count（初始化这个栅栏的时候设定的值）个节点调用了Enter，这count个被阻塞的节点才能继续执行。所以你可以利用它编排一组节点，让这些节点在同一个时刻开始执行任务。
+- 同理，如果你想让一组节点在同一个时刻完成任务，就可以调用Leave方法。节点调用Leave方法的时候，会被阻塞，直到有count个节点，都调用了Leave方法，这些节点才能继续执行。
+### STM
+- 
