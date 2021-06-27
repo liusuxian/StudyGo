@@ -13,3 +13,11 @@ func (e *Election) Campaign(ctx context.Context, val string) error
     - 成功当选为主；
     - 此方法返回错误；
     - ctx被取消。
+- 第二个方法是Proclaim。它的作用是，重新设置Leader的值，但是不会重新选主，这个方法会返回新值设置成功或者失败的信息。方法签名如下所示：
+``` go
+func (e *Election) Proclaim(ctx context.Context, val string) error
+```
+- 第三个方法是 Resign：开始新一次选举。这个方法会返回新的选举成功或者失败的信息。它的签名如下所示：
+``` go
+func (e *Election) Resign(ctx context.Context) (err error)
+```
