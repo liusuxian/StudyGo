@@ -49,5 +49,5 @@ func NewLocker(s *Session, pfx string) sync.Locker
 - Mutex并没有实现sync.Locker接口，它的Lock/Unlock方法需要提供一个context.Context实例做参数，这也就意味着，在请求锁的时候，你可以设置超时时间，或者主动取消请求。
 ### 读写锁
 - etcd提供的分布式读写锁的功能和标准库的读写锁的功能是一样的。只不过etcd提供的读写锁，可以在分布式环境中的不同的节点使用。它提供的方法也和标准库中的读写锁的方法一致，分别提供了RLock/RUnlock、Lock/Unlock方法。
-### 内存模型的知识地图。
+### Etcd的知识地图。
 <img src="https://github.com/liusuxian/StudyGo/blob/master/img/Etcd.jpg" width = "100%" height = "100%" alt="image-name"/>
