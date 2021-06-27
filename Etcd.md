@@ -51,3 +51,22 @@ func NewLocker(s *Session, pfx string) sync.Locker
 - etcd提供的分布式读写锁的功能和标准库的读写锁的功能是一样的。只不过etcd提供的读写锁，可以在分布式环境中的不同的节点使用。它提供的方法也和标准库中的读写锁的方法一致，分别提供了RLock/RUnlock、Lock/Unlock方法。
 ### Etcd的知识地图。
 <img src="https://github.com/liusuxian/StudyGo/blob/master/img/Etcd.jpg" width = "100%" height = "100%" alt="image-name"/>
+
+### 分布式队列和优先级队列
+- etcd通过github.com/coreos/etcd/contrib/recipes包提供了分布式队列这种数据结构。
+- 创建分布式队列的方法非常简单，只有一个，即NewQueue，你只需要传入etcd的client和这个队列的名字，就可以了。代码如下：
+``` go
+func NewQueue(client *v3.Client, keyPrefix string) *Queue
+```
+- 这个队列只有两个方法，分别是出队和入队，队列中的元素是字符串类型。这两个方法的签名如下所示：
+``` go
+// 入队
+func (q *Queue) Enqueue(val string) error
+// 出队
+func (q *Queue) Dequeue() (string, error)
+```
+- 需要注意的是，如果这个分布式队列当前为空，调用Dequeue方法的话，会被阻塞，直到有元素可以出队才返回。
+- 既然是分布式的队列，那就意味着，我们可以在一个节点将元素放入队列，在另外一个节点把它取出。
+- etcd的分布式队列是一种多读多写的队列，所以你也可以启动多个写节点和多个读节点。
+- etcd还提供了优先级队列（PriorityQueue）。它的用法和队列类似，也提供了出队和入队的操作，只不过在入队的时候，除了需要把一个值加入到队列，我们还需要提供uint16类型的一个整数，作为此值的优先级，优先级高的元素会优先出队。
+### 分布式栅栏
