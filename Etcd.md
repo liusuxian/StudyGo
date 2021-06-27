@@ -9,7 +9,6 @@
 ``` go
 func (e *Election) Campaign(ctx context.Context, val string) error
 ```
-
   - 需要注意的是，这是一个阻塞方法，在调用它的时候会被阻塞，直到满足下面的三个条件之一，才会取消阻塞。
     - 成功当选为主；
     - 此方法返回错误；
