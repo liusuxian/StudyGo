@@ -170,3 +170,23 @@
 - [https://blog.csdn.net/jiaomeng/article/details/1495500](https://blog.csdn.net/jiaomeng/article/details/1495500)
 - [https://blog.csdn.net/yizishou/article/details/78342499](https://blog.csdn.net/yizishou/article/details/78342499)
 - [https://blog.csdn.net/caoshangpa/article/details/78783749](https://blog.csdn.net/caoshangpa/article/details/78783749)
+
+### 分布式缓存
+- [https://blog.csdn.net/chen_kkw/article/details/82724330](https://blog.csdn.net/chen_kkw/article/details/82724330)
+- [https://zhuanlan.zhihu.com/p/328728595](https://zhuanlan.zhihu.com/p/328728595)
+- [https://www.cnblogs.com/chinanetwind/articles/9460820.html](https://www.cnblogs.com/chinanetwind/articles/9460820.html)
+- [https://medium.com/vimeo-engineering-blog/improving-load-balancing-with-a-new-consistent-hashing-algorithm-9f1bd75709ed](https://medium.com/vimeo-engineering-blog/improving-load-balancing-with-a-new-consistent-hashing-algorithm-9f1bd75709ed)
+- [https://www.jianshu.com/p/5fa447c60327](https://www.jianshu.com/p/5fa447c60327)
+- [https://writings.sh/post/consistent-hashing-algorithms-part-1-the-problem-and-the-concept](https://writings.sh/post/consistent-hashing-algorithms-part-1-the-problem-and-the-concept)
+- [https://www.cnblogs.com/williamjie/p/11132211.html](https://www.cnblogs.com/williamjie/p/11132211.html)
+
+### 分布式事务
+- [https://blog.csdn.net/hosaos/article/details/89136666](https://blog.csdn.net/hosaos/article/details/89136666)
+- [https://zhuanlan.zhihu.com/p/183753774](https://zhuanlan.zhihu.com/p/183753774)
+- [https://www.cnblogs.com/dyzcs/p/13780668.html](https://www.cnblogs.com/dyzcs/p/13780668.html)
+- [https://blog.csdn.net/bjweimengshu/article/details/79607522](https://blog.csdn.net/bjweimengshu/article/details/79607522)
+- [https://microservices.io/patterns/data/event-sourcing.html](https://microservices.io/patterns/data/event-sourcing.html)
+- [https://microservices.io/patterns/data/saga.html](https://microservices.io/patterns/data/saga.html)
+- [https://microservices.io/patterns/data/polling-publisher.html](https://microservices.io/patterns/data/polling-publisher.html)
+- [https://microservices.io/patterns/data/polling-publisher.html](https://microservices.io/patterns/data/polling-publisher.html)
+- [https://microservices.io/patterns/data/transaction-log-tailing.html](https://microservices.io/patterns/data/transaction-log-tailing.html)
